@@ -1,0 +1,23 @@
+{
+  "MAX_LOGOS": "O template deve ter no máximo 3 logos",
+  "MAX_SIGNATURES": "O template deve ter entre 1 e 3 assinaturas",
+  "ARRAY": "deve ser um array",
+  "STRING": "deve ser um string",
+  "DATE": "deve ser uma data",
+  "NUMBER": "deve ser um número",
+  "MIN": "deve ser maior que {min}",
+  "MAX": "deve ser menor que {max}",
+  "MIN_SIZE": "deve ter pelo menos {minSize} itens",
+  "MAX_SIZE": "deve ter no máximo {maxSize} itens",
+  "DEFINED": "deve existir",
+  "NOT_EMPTY": "deve existir",
+  "MIMETYPE": {
+    "zero": "Tipo de arquivo não reconhecido",
+    "one": "{mimetypes} não é um tipo de arquivo válido",
+    "other": "{mimetypes} não são tipos de arquivo válidos"
+  },
+  "MAX_BYTES": "deve ter no máximo {maxBytes} bytes",
+  "ENUM": "deve ser um dos seguintes valores: {values}",
+  "UUID": "deve ser um UUID válido",
+  "IS_BASE64": "deve ser base64 encoded"
+}

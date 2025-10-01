@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Certificado de Conclusão</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap"
+    rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Public+Sans:ital,wght@0,100..900;1,100..900&display=swap"
+    rel="stylesheet">
+  <style>
+    body {
+      height: 100vh;
+      margin: 0;
+      font-family: 'Roboto', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: transparent;
+    }
+
+    .background {
+      box-sizing: border-box;
+      width: 297mm;
+      height: 210mm;
+      border-radius: 24px;
+      background: url({{{background}}}) no-repeat center/cover;
+      background-color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 24px 64px;
+    }
+
+    .content {
+      height: 100%;
+      width: 68%;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: space-between;
+    }
+
+    .top {
+      display: flex;
+      width: 100%;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 9px;
+      align-self: stretch;
+
+      /* remove margin and padding of all children */
+      * {
+        margin: 0;
+        padding: 0;
+      }
+
+      h1 {
+        color: var(--Neutral-Colors-Neutral-600, #4B4B4B);
+        font-feature-settings: 'liga' off, 'calt' off;
+
+        /* Heading/Heading 2 */
+        font-family: "Plus Jakarta Sans";
+        font-size: 32px;
+        font-style: normal;
+        font-weight: 700;
+        line-height: 48px;
+        /* 150% */
+        letter-spacing: -0.32px;
+      }
+
+      h2 {
+        color: var(--Neutral-Colors-Neutral-600, #4B4B4B);
+        font-feature-settings: 'liga' off;
+
+        /* Subtitle/Subtitle 2 */
+        font-family: "Plus Jakarta Sans";
+        font-size: 16px;
+        font-style: normal;
+        font-weight: 500;
+        line-height: 24px;
+        /* 150% */
+      }
+
+      hr {
+        height: 4px;
+        width: 100%;
+        background: var(--Prymary-Colors-Primary-600, #3F51B5);
+      }
+    }
+
+
+    /* four rows and four columns, 16 items in total */
+    .content-list {
+      display: grid;
+      width: 100%;
+      grid-auto-flow: column dense;
+      grid-template-rows: repeat(14, 1fr);
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      column-gap: 24px;
+      padding: 0;
+
+      li {
+        color: var(--Prymary-Colors-Primary-600, #3F51B5);
+        font-feature-settings: 'liga' off;
+
+        /* Caption/Caption 1 */
+        font-family: "Public Sans";
+        font-size: 12px;
+        font-style: normal;
+        font-weight: 500;
+        line-height: 24px;
+        /* 200% */
+        letter-spacing: -0.12px;
+        list-style-position: inside;
+        flex-direction: column;
+      }
+
+      p {
+        color: var(--Neutral-Colors-Neutral-600, #4B4B4B);
+        font-feature-settings: 'liga' off;
+
+        /* Caption/Caption 2 */
+        font-family: "Public Sans";
+        font-size: 12px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 16px;
+        /* 133.333% */
+        letter-spacing: -0.12px;
+
+        margin: 8px 0 0 0;
+        padding: 0;
+      }
+    }
+
+    .bottom {
+      width: 100%;
+    }
+
+    .course-info {
+      display: flex;
+      justify-content: space-between;
+
+      p {
+        color: var(--Neutral-Colors-Neutral-600, #4B4B4B);
+        font-feature-settings: 'liga' off;
+
+        /* Caption/Caption 1 */
+        font-family: "Public Sans";
+        font-size: 12px;
+        font-style: normal;
+        font-weight: 500;
+        line-height: 24px;
+        /* 200% */
+        letter-spacing: -0.12px;
+      }
+    }
+
+    .custom-footer {
+      p {
+        color: var(--Neutral-Colors-Neutral-600, #4B4B4B);
+        font-feature-settings: 'liga' off;
+
+        /* Body/Body 4 */
+        font-family: "Public Sans";
+        font-size: 12px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 24px;
+        /* 200% */
+      }
+    }
+
+    footer {
+      color: var(--Neutral-Colors-Neutral-600, #4B4B4B);
+      font-feature-settings: 'liga' off;
+      text-align: center;
+
+      /* Body/Body 4 */
+      font-family: "Public Sans";
+      font-size: 12px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: 24px;
+      /* 200% */
+    }
+  </style>
+</head>
+
+<body>
+  <div class="background">
+    <div class="content">
+
+      <div class="top">
+        <h1>{{title}}</h1>
+        <h2>{{subtitle}}</h2>
+        <hr class="divider">
+      </div>
+
+
+      <ol class="content-list">
+        {{#each content.children}}
+        <li>{{this.name}}</li>
+        {{/each}}
+      </ol>
+
+      <div class="bottom">
+        <div class="course-info">
+          <p>{{structure.name}}</p>
+          <p>Carga Horária: {{workload}} horas</p>
+        </div>
+
+        <div class="custom-footer">
+          <p>{{footer}}</p>
+        </div>
+
+        <footer>
+          Documento emitido em {{currentDate}} pela {{organization}}
+        </footer>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>

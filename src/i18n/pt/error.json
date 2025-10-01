@@ -1,0 +1,23 @@
+{
+  "ACCESS_DENIED": "Acesso negado",
+  "AUTHORIZATION_HEADER_REQUIRED": "o header `Authorization` é obrigatório",
+  "INVALID_AUTHORIZATION_HEADER": "o header `Authorization` é inválido",
+  "CLIENT_NAME_HEADER_REQUIRED": "o header `x-client-name` é obrigatório",
+  "INVALID_CLIENT_NAME": "`x-client-name` inválido",
+  "INVALID_FILE_TYPE": "{field} deve ser um arquivo {type}",
+  "TEMPLATE": {
+    "NOT_FINISHED": "template não finalizado"
+  },
+  "NOT_FOUND": {
+    "M": "{resource} não encontrado",
+    "F": "{resource} não encontrada",
+    "BLUEPRINT": "Blueprint não encontrado",
+    "TEMPLATE": "Template não encontrado",
+    "CERTIFICATE": "Certificado não encontrado",
+    "SIGNATURE": "Assinatura não encontrada",
+    "LOGO": "Logo não encontrada",
+    "STRUCTURE": "Estrutura não encontrada",
+    "USER": "Usuário não encontrado",
+    "CLIENT": "Cliente não encontrado"
+  }
+}
