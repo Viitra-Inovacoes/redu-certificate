@@ -13,7 +13,7 @@ import { i18n } from 'src/i18n';
 import { StructureType } from 'src/structures/entities/structure.entity';
 
 export class Structure {
-  @ApiProperty({ type: 'string', required: true })
+  @ApiProperty({ enum: Object.values(StructureType), required: true })
   @IsString()
   @IsNotEmpty()
   @IsEnum(StructureType)
@@ -26,12 +26,6 @@ export class Structure {
 }
 
 export class CloneTemplateDto {
-  @ApiProperty({ type: 'string', format: 'uuid', required: true })
-  @IsString()
-  @IsNotEmpty()
-  @IsUUID()
-  originalTemplateId: string;
-
   @ApiProperty({
     type: 'array',
     items: {
@@ -44,7 +38,7 @@ export class CloneTemplateDto {
     },
     required: true,
   })
-  @IsArray({ each: true })
+  @IsArray()
   @IsNotEmpty({ message: i18n.validationMessage('validation.NOT_EMPTY') })
   @ValidateNested({ each: true })
   @Type(() => Structure)
