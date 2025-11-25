@@ -114,19 +114,20 @@ export class TemplatesService {
       structure.structureType,
       structure.structureId,
     );
+    let structure_founded = await this.structureService.findOrCreate(
+      structure.structureType,
+      structure.structureId,
+    );
 
     template = {
       ...original,
       id: template.id,
-      structure: {
-        id: uuidv7(),
-        structureType: structure.structureType,
-        structureId: structure.structureId,
-        client,
-      },
+      structure: structure_founded
     } as Template;
 
     try {
+      await this.templateRepository.save(template);
+
       await Promise.all([
         ...logos.map((logo) =>
           this.logosService.copyToTemplate(logo, template),
@@ -135,9 +136,9 @@ export class TemplatesService {
           this.signaturesService.copyToTemplate(signature, template),
         ),
       ]);
-      return this.templateRepository.save(template);
+      
     } catch (error) {
-      await this.s3.deleteFolder(template.folderKey);
+      // await this.s3.deleteFolder(template.folderKey);
       throw error;
     }
   }

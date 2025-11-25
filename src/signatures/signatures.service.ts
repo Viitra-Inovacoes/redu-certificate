@@ -35,6 +35,8 @@ export class SignaturesService {
   async copyToTemplate(signature: Signature, template: Template) {
     const newSignature = this.signatureRepository.create({
       id: uuidv7(),
+      name: signature.name,
+      role: signature.role,
       template,
     });
 
