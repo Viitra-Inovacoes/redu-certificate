@@ -31,9 +31,14 @@ export class TemplatesController {
 
   @Post(':structureType/:structureId/clone')
   @TemplateGuard(Ability.MANAGE)
+  @ApiStructureTypeIdParam()
   @ApiBody({ type: CloneTemplateDto })
-  async clone(@Body() body: CloneTemplateDto) {
-    return this.templatesService.clone(body);
+  async clone(
+    @Param('structureType') structureType: StructureType,
+    @Param('structureId') structureId: number,
+    @Body() body: CloneTemplateDto,
+  ) {
+    return this.templatesService.clone(body, structureType, structureId);
   }
 
   @Post(':structureType/:structureId')

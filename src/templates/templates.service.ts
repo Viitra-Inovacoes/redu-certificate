@@ -75,13 +75,25 @@ export class TemplatesService {
     };
   }
 
-  async clone(body: CloneTemplateDto) {
-    const { originalTemplateId, structures } = body;
+  async clone(
+    body: CloneTemplateDto,
+    OriginalStructureType: StructureType,
+    OriginalStructureId: number,
+  ) {
+    const { structures } = body;
     const client = await this.clientService.getClient();
-    const originalTemplate = await this.findOne(originalTemplateId);
+    const originalTemplate = await this.findOneBy({
+      where: {
+        structure: {
+          structureType: OriginalStructureType,
+          structureId: OriginalStructureId,
+        },
+      },
+    });
+
     const [logos, signatures] = await Promise.all([
-      this.logosService.findByTemplateId(originalTemplateId),
-      this.signaturesService.findByTemplateId(originalTemplateId),
+      this.logosService.findByTemplateId(originalTemplate.id),
+      this.signaturesService.findByTemplateId(originalTemplate.id),
     ]);
 
     await Promise.all(
