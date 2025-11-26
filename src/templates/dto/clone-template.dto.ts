@@ -1,4 +1,4 @@
-import { ApiProperty, getSchemaPath } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import {
   IsArray,
@@ -6,7 +6,6 @@ import {
   IsNotEmpty,
   IsNumber,
   IsString,
-  IsUUID,
   ValidateNested,
 } from 'class-validator';
 import { i18n } from 'src/i18n';

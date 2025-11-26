@@ -15,20 +15,21 @@ import { FindOneOptions, Repository } from 'typeorm';
 
 export type Children = Exclude<BackContentType, BackContentType.CUSTOM>;
 
-export type StructureData = {
+export type ReduStructure = {
   id: number;
   name: string;
   description: string;
   attendanceWorkload: number;
 };
+
 export type ChildrenData = {
-  collection: StructureData[];
+  collection: ReduStructure[];
   pagination: {
     totalCount: number;
   };
 };
 
-export type CompletionData = {
+export type Completion = {
   progress: number;
   presence: number;
   grade: number;
@@ -106,7 +107,7 @@ export class StructuresService {
     structureId: number;
   }) {
     const url = this.buildUrl({ structure });
-    return await this.reduApi.get<StructureData>(url);
+    return await this.reduApi.get<ReduStructure>(url);
   }
 
   async getChildren(structure: Structure, children: Children) {
@@ -131,7 +132,7 @@ export class StructuresService {
       params: queryParams,
     });
 
-    const completion = await this.reduApi.get<CompletionData>(url);
+    const completion = await this.reduApi.get<Completion>(url);
     return {
       progress: completion.progress,
       presence: completion.presence,

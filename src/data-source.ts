@@ -3,7 +3,6 @@ import * as path from 'path';
 import { config } from 'dotenv';
 
 // Load environment variables
-// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 config();
 
 export const dataSourceOptions: DataSourceOptions = {
@@ -15,8 +14,9 @@ export const dataSourceOptions: DataSourceOptions = {
   database: process.env.POSTGRES_DB,
   logging: true,
   entities: [path.join(__dirname, '**', '*.entity.{ts,js}')],
-  migrations: [path.join(__dirname, '**', '*.migration.{ts,js}')],
-  synchronize: true,
+  migrations: [path.join(__dirname, 'migrations', '*{.ts,.js}')],
+  synchronize: false,
+  migrationsRun: true,
 };
 
 export const AppDataSource = new DataSource(dataSourceOptions);

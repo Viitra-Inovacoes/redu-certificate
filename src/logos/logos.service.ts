@@ -7,6 +7,8 @@ import { Repository } from 'typeorm';
 import { Logo } from 'src/logos/entities/logo.entity';
 import { i18n } from 'src/i18n';
 import { Template } from 'src/templates/entities/template.entity';
+import { plainToInstance } from 'class-transformer';
+import { LogoResponseDto } from 'src/logos/dto/logo-response.dto';
 
 @Injectable()
 export class LogosService {
@@ -42,19 +44,25 @@ export class LogosService {
     return await this.logoRepository.save(newLogo);
   }
 
-  async getInfo(templateId: string) {
+  async serializeAllByTemplateId(templateId: string) {
     const logos = await this.findByTemplateId(templateId);
-    const files = await Promise.all(
-      logos.map((logo) => this.s3.getFile(logo.getSpacesKey())),
-    );
+    return Promise.all(logos.map((l) => this.serialize(l)));
+  }
 
-    return Promise.all(
-      logos.map(async (logo, index) => ({
-        id: logo.id,
+  async serialize(logo: Logo) {
+    const metadata = await this.s3.getMetadata(logo.getSpacesKey());
+    const data = {
+      ...logo,
+      file: {
+        ...metadata,
         url: await this.s3.getPresignedUrl(logo.getSpacesKey()),
-        fileName: files[index].Metadata?.originalName,
-      })),
-    );
+      },
+    };
+
+    return plainToInstance(LogoResponseDto, data, {
+      excludeExtraneousValues: true,
+      enableImplicitConversion: true,
+    });
   }
 
   async findByTemplateId(templateId: string) {

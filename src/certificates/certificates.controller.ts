@@ -1,14 +1,35 @@
-import { Controller, Get, Post, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Param,
+  Delete,
+  Body,
+  UseInterceptors,
+  UploadedFile,
+  Request,
+} from '@nestjs/common';
 import { CertificatesService } from './certificates.service';
 import { StructureType } from 'src/structures/entities/structure.entity';
 import { CertificateGuard } from 'src/certificates/guards/certificate.guard';
 import { Ability } from 'src/redu-api/authorization.service';
 import { ApiSecurity, ApiStructureTypeIdParam } from 'src/decorators/swagger';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { MigrateCertificateDto } from 'src/certificates/dto/migrate-certificate.dto';
 
 @Controller('certificates')
 @ApiSecurity()
 export class CertificatesController {
   constructor(private readonly certificatesService: CertificatesService) {}
+
+  @Post('migrate')
+  @UseInterceptors(FileInterceptor('pdf'))
+  migrate(
+    @Body() body: MigrateCertificateDto,
+    @UploadedFile('file') pdf: Express.Multer.File,
+  ) {
+    return this.certificatesService.migrate(body, pdf);
+  }
 
   @Get('')
   findAll() {

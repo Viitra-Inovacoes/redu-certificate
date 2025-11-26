@@ -10,9 +10,10 @@ import {
 import { SignaturesService } from './signatures.service';
 import { CreateSignatureDto } from './dto/create-signature.dto';
 import { SignatureSchema } from './dto/signature-schema';
-import { ApiBody, ApiConsumes } from '@nestjs/swagger';
+import { ApiBody, ApiConsumes, ApiResponse } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { FileValidationFactory } from 'src/validators/file-validation.factory';
+import { SignatureResponseDto } from 'src/signatures/dto/signature-response.dto';
 
 @Controller('signatures')
 export class SignaturesController {
@@ -22,7 +23,8 @@ export class SignaturesController {
   @ApiConsumes('multipart/form-data')
   @ApiBody({ type: SignatureSchema })
   @UseInterceptors(FileInterceptor('file'))
-  create(
+  @ApiResponse({ type: SignatureResponseDto })
+  async create(
     @Body() body: CreateSignatureDto,
     @UploadedFile(
       FileValidationFactory.createValidationPipe({
@@ -33,7 +35,8 @@ export class SignaturesController {
     )
     file: Express.Multer.File,
   ) {
-    return this.signaturesService.create(body, file);
+    const signature = await this.signaturesService.create(body, file);
+    return this.signaturesService.serialize(signature);
   }
 
   @Delete(':id')

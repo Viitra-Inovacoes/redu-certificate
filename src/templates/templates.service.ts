@@ -30,6 +30,8 @@ import { CloneTemplateDto } from 'src/templates/dto/clone-template.dto';
 import { Client } from 'src/client/entities/client.entity';
 import { Logo } from 'src/logos/entities/logo.entity';
 import { Signature } from 'src/signatures/entities/signature.entity';
+import { plainToInstance } from 'class-transformer';
+import { TemplateResponseDto } from 'src/templates/dto/template-response.dto';
 
 @Injectable()
 export class TemplatesService {
@@ -61,18 +63,19 @@ export class TemplatesService {
     });
   }
 
-  async getInfo(structureType: StructureType, structureId: number) {
-    const template = await this.findOneByStructure(structureType, structureId);
-    const [logos, signatures] = await Promise.all([
-      this.logosService.getInfo(template.id),
-      this.signaturesService.getInfo(template.id),
-    ]);
-
-    return {
-      template,
-      logos,
-      signatures,
+  async serialize(template: Template) {
+    const data = {
+      ...template,
+      logos: await this.logosService.serializeAllByTemplateId(template.id),
+      signatures: await this.signaturesService.serializeAllByTemplateId(
+        template.id,
+      ),
     };
+
+    return plainToInstance(TemplateResponseDto, data, {
+      excludeExtraneousValues: true,
+      enableImplicitConversion: true,
+    });
   }
 
   async clone(
@@ -114,20 +117,17 @@ export class TemplatesService {
       structure.structureType,
       structure.structureId,
     );
-    let structure_founded = await this.structureService.findOrCreate(
-      structure.structureType,
-      structure.structureId,
-    );
+
+    structure = template.structure;
 
     template = {
       ...original,
       id: template.id,
-      structure: structure_founded
+      structure,
     } as Template;
 
     try {
       await this.templateRepository.save(template);
-
       await Promise.all([
         ...logos.map((logo) =>
           this.logosService.copyToTemplate(logo, template),
@@ -136,9 +136,8 @@ export class TemplatesService {
           this.signaturesService.copyToTemplate(signature, template),
         ),
       ]);
-      
     } catch (error) {
-      // await this.s3.deleteFolder(template.folderKey);
+      await this.s3.deleteFolder(template.folderKey);
       throw error;
     }
   }
@@ -160,13 +159,13 @@ export class TemplatesService {
         ...(body as Template),
         metadata: {
           hasBackPage:
-            body.metadata?.hasBackPage ?? template.metadata.hasBackPage,
+            Boolean(body.back?.content) || body.metadata?.hasBackPage,
           customBackground: {
             front:
-              Boolean(frontBackground) ||
-              body.metadata?.customBackground?.front,
+              body.metadata?.customBackground?.front ||
+              Boolean(frontBackground),
             back:
-              Boolean(backBackground) || body.metadata?.customBackground?.back,
+              body.metadata?.customBackground?.back || Boolean(backBackground),
           },
         },
       });

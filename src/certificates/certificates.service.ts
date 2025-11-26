@@ -21,10 +21,11 @@ import { S3KeyKind, Template } from 'src/templates/entities/template.entity';
 import { RequirementsService } from 'src/certificates/requirements.service';
 import { StructureType } from 'src/structures/entities/structure.entity';
 import { TemplatesService } from 'src/templates/templates.service';
-import { UsersService } from 'src/users/users.service';
+import { ReduUser, UsersService } from 'src/users/users.service';
 import { i18n } from 'src/i18n';
 import { Signature } from 'src/signatures/entities/signature.entity';
 import { Logo } from 'src/logos/entities/logo.entity';
+import { MigrateCertificateDto } from 'src/certificates/dto/migrate-certificate.dto';
 
 @Injectable()
 export class CertificatesService {
@@ -40,6 +41,38 @@ export class CertificatesService {
     @Inject(forwardRef(() => TemplatesService))
     private readonly templatesService: TemplatesService,
   ) {}
+
+  async migrate(body: MigrateCertificateDto, pdf: Express.Multer.File) {
+    const template = await this.templatesService.create(
+      body.structure.structureType,
+      body.structure.structureId,
+    );
+
+    await this.templatesService.update(template.id, {
+      front: {
+        workload: body.certificate.workload,
+      },
+    });
+
+    const user = await this.usersService.findOrCreate(
+      body.user as unknown as ReduUser,
+    );
+
+    const certificate = this.certificateRepository.create({
+      id: uuidv7(),
+      template,
+      user,
+      validationCode: body.certificate.validationCode,
+      createdAt: body.certificate.createdAt,
+      migrated: true,
+    });
+
+    await this.s3.uploadFile(
+      pdf,
+      certificate.getS3Key({ kind: 'merged', format: 'pdf' }),
+    );
+    await this.certificateRepository.save(certificate);
+  }
 
   async create(structureType: StructureType, structureId: number) {
     const template = await this.templatesService.findOneByStructure(
@@ -110,15 +143,19 @@ export class CertificatesService {
 
   async getCertificateInfo(structureType: StructureType, structureId: number) {
     const { id: reduUserId } = await this.usersService.getReduUser();
+    const template = await this.templatesService.findOneByStructure(
+      structureType,
+      structureId,
+      {
+        relations: { structure: true },
+      },
+    );
     try {
       const certificate = await this.findOneBy({
         where: {
           user: { reduUserId },
           template: {
-            structure: {
-              structureType,
-              structureId,
-            },
+            id: template.id,
           },
         },
         relations: { template: { structure: true } },
@@ -132,9 +169,9 @@ export class CertificatesService {
     } catch (error) {
       if (!(error instanceof NotFoundException)) throw error;
       return {
-        canGenerate: false,
+        canGenerate: await this.requirements.canGenerate(template),
         outdated: false,
-        requirements: null,
+        requirements: template.requirements,
         urls: null,
       };
     }
@@ -167,12 +204,8 @@ export class CertificatesService {
         'logos."templateId" = template.id',
       )
       .where('certificate.validationCode = :validationCode', { validationCode })
-      .andWhere('certificate.createdAt >= template.updatedAt')
       .andWhere(
-        'certificate.createdAt >= COALESCE(signatures."maxUpdatedAt", certificate.createdAt)',
-      )
-      .andWhere(
-        'certificate.createdAt >= COALESCE(logos."maxUpdatedAt", certificate.createdAt)',
+        '(certificate.migrated = true OR (certificate.migrated = false AND certificate.createdAt >= template.updatedAt AND certificate.createdAt >= COALESCE(signatures."maxUpdatedAt", certificate.createdAt) AND certificate.createdAt >= COALESCE(logos."maxUpdatedAt", certificate.createdAt)))',
       )
       .getOne();
 

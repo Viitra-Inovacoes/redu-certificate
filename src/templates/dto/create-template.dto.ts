@@ -199,6 +199,10 @@ export class MetadataCustomBackground {
   @IsBoolean()
   @IsOptional()
   front?: boolean;
+
+  @ApiProperty({ type: 'boolean' })
+  @IsBoolean()
+  @IsOptional()
   back?: boolean;
 }
 

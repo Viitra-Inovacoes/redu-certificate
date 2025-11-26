@@ -7,7 +7,7 @@ import { User } from 'src/users/entities/user.entity';
 import { FindOneOptions, Repository } from 'typeorm';
 import { v7 as uuidv7 } from 'uuid';
 
-type ReduUser = {
+export type ReduUser = {
   id: number;
   name: string;
   cpf: string;

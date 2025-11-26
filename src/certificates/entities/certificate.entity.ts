@@ -50,6 +50,9 @@ export class Certificate {
   @Column('uuid', { nullable: false })
   userId: string;
 
+  @Column('boolean', { default: false })
+  migrated: boolean;
+
   @CreateDateColumn({
     type: 'timestamp with time zone',
     default: () => 'now()',
