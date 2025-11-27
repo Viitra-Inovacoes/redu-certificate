@@ -9,8 +9,8 @@ import {
   IsString,
   ValidateNested,
   IsDate,
-  IsObject,
 } from 'class-validator';
+import { TransformBoolean } from 'src/decorators/transform-boolean.decorator';
 import { TransformJson } from 'src/decorators/transform-json.decorator';
 import { i18n } from 'src/i18n';
 import {
@@ -129,6 +129,7 @@ class Front {
   workload: number;
 
   @ApiProperty({ type: 'boolean' })
+  @TransformBoolean()
   @IsBoolean()
   @IsOptional()
   sumPresenceWorkload: boolean;
@@ -196,14 +197,21 @@ class Back {
 
 export class MetadataCustomBackground {
   @ApiProperty({ type: 'boolean' })
+  @TransformBoolean()
   @IsBoolean()
   @IsOptional()
   front?: boolean;
+
+  @ApiProperty({ type: 'boolean' })
+  @TransformBoolean()
+  @IsBoolean()
+  @IsOptional()
   back?: boolean;
 }
 
 export class Metadata {
   @ApiProperty({ type: 'boolean' })
+  @TransformBoolean()
   @IsBoolean()
   @IsOptional()
   hasBackPage?: boolean;
@@ -218,7 +226,7 @@ export class Metadata {
 
 export class CreateTemplateDto {
   @ApiProperty({ type: 'boolean' })
-  @IsBoolean()
+  @TransformBoolean()
   @IsOptional()
   generationEnabled?: boolean;
 

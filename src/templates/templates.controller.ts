@@ -7,7 +7,7 @@ import {
   Delete,
   Get,
 } from '@nestjs/common';
-import { ApiBody, ApiConsumes } from '@nestjs/swagger';
+import { ApiBody, ApiConsumes, ApiResponse } from '@nestjs/swagger';
 import { CreateTemplateDto } from 'src/templates/dto/create-template.dto';
 import { templateSchema } from 'src/templates/dto/template-schema';
 import { TemplatesService } from 'src/templates/templates.service';
@@ -20,6 +20,7 @@ import { TemplateFiles } from 'src/templates/decorators/template-files.decorator
 import { ApiAuth } from 'src/decorators/swagger/api-auth.decorator';
 import { ApiStructureTypeIdParam } from 'src/decorators/swagger';
 import { CloneTemplateDto } from 'src/templates/dto/clone-template.dto';
+import { TemplateResponseDto } from 'src/templates/dto/template-response.dto';
 
 @Controller('templates')
 @ApiAuth()
@@ -45,11 +46,17 @@ export class TemplatesController {
   @TemplateGuard(Ability.MANAGE)
   @ApiConsumes('multipart/form-data')
   @ApiStructureTypeIdParam()
+  @ApiResponse({ type: TemplateResponseDto })
   async create(
     @Param('structureType') structureType: StructureType,
     @Param('structureId') structureId: number,
   ) {
-    return this.templatesService.create(structureType, structureId);
+    const template = await this.templatesService.create(
+      structureType,
+      structureId,
+    );
+
+    return this.templatesService.serialize(template);
   }
 
   @Get(':id/preview')
@@ -69,17 +76,20 @@ export class TemplatesController {
   @TemplateFilesInterceptor()
   @ApiBody({ type: templateSchema })
   @ApiConsumes('multipart/form-data')
+  @ApiResponse({ type: TemplateResponseDto })
   async update(
     @Param('id') id: string,
     @Body() body: CreateTemplateDto,
     @TemplateFiles() files: TemplateFiles,
   ) {
-    return this.templatesService.update(
+    const template = await this.templatesService.update(
       id,
       body,
       files.frontBackground,
       files.backBackground,
     );
+
+    return this.templatesService.serialize(template);
   }
 
   @Patch(':id/generationEnabled')
@@ -115,20 +125,17 @@ export class TemplatesController {
   @Get(':structureType/:structureId')
   @ApiStructureTypeIdParam()
   @TemplateGuard(Ability.READ)
+  @ApiResponse({ type: TemplateResponseDto })
   async findOneByStructure(
     @Param('structureType') structureType: StructureType,
     @Param('structureId') structureId: number,
   ) {
-    return this.templatesService.findOneByStructure(
+    const template = await this.templatesService.findOneByStructure(
       structureType,
       structureId,
-      {
-        finished: true,
-        relations: {
-          logos: true,
-          signatures: true,
-        },
-      },
+      { finished: true },
     );
+
+    return this.templatesService.serialize(template);
   }
 }

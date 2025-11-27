@@ -9,8 +9,12 @@ import {
 } from 'src/templates/entities/template.entity';
 import { Signature } from 'src/signatures/entities/signature.entity';
 import { Logo } from 'src/logos/entities/logo.entity';
-import { StructuresService } from 'src/structures/structures.service';
-import { UsersService } from 'src/users/users.service';
+import {
+  Completion,
+  ReduStructure,
+  StructuresService,
+} from 'src/structures/structures.service';
+import { ReduUser, UsersService } from 'src/users/users.service';
 
 export type Page = {
   html: string;
@@ -22,6 +26,9 @@ export type Page = {
 export class CertificateBuilderService {
   private readonly QR_CODE_BASE_URL = process.env.QR_CODE_BASE_URL!;
   private template: Template;
+  private structure: ReduStructure;
+  private completion: Completion;
+  private user: ReduUser;
   private validationCode: string;
 
   constructor(
@@ -34,6 +41,17 @@ export class CertificateBuilderService {
   async build(template: Template, validationCode: string) {
     this.template = template;
     this.validationCode = validationCode;
+
+    const [structure, user, completion] = await Promise.all([
+      this.structureService.getReduStructure(this.template.structure),
+      this.usersService.getReduUser(),
+      this.structureService.getCompletion(this.template.structure),
+    ]);
+
+    this.structure = structure;
+    this.user = user;
+    this.completion = completion;
+
     const [front, back] = await Promise.all([
       this.generateFrontPage(),
       this.generateBackPage(),
@@ -81,6 +99,8 @@ export class CertificateBuilderService {
     const templateKey = this.template.blueprint.getS3Key(blueprintTemplateKind);
     return this.getBaseHandlebarsTemplate(templateKey)
       .then((handlebars) => handlebars(data))
+      .then((html) => Handlebars.compile(html))
+      .then((handlebars) => handlebars(data))
       .then((html) => this.render(html));
   }
 
@@ -105,40 +125,36 @@ export class CertificateBuilderService {
   }
 
   private async getFrontData() {
-    const [signatures, logos, background, structure, user, qrcode] =
-      await Promise.all([
-        this.getSignatures(),
-        this.getLogos(),
-        this.getBackground('front'),
-        this.structureService.getReduStructure(this.template.structure),
-        this.usersService.getReduUser(),
-        this.generateQRCode(),
-      ]);
-
-    // dd/mm/yyyy
-    const formatDate = (date: Date) =>
-      new Date(date).toLocaleDateString('pt-BR');
-
-    const frontData = this.template.front;
-    const workload = frontData.sumPresenceWorkload
-      ? frontData.workload + structure.attendanceWorkload
-      : frontData.workload;
+    const [signatures, logos, background, qrcode] = await Promise.all([
+      this.getSignatures(),
+      this.getLogos(),
+      this.getBackground('front'),
+      this.generateQRCode(),
+    ]);
 
     return {
-      ...frontData,
-      workload,
+      ...this.template.front,
+      workload: this.getWorkload(),
       signatures,
       logos,
       background,
       qrcode,
-      'NOME COMPLETO DO ESTUDANTE': user.name,
-      CPF: user.cpf,
-      'NOME DA ESTRUTURA': structure.name,
-      'NOTA MÍNIMA PARA APROVAÇÃO': this.template?.requirements?.grade?.value,
+      currentDate: this.formatDate(new Date()),
+      'NOME COMPLETO DO CURSISTA': this.user.name,
+      CPF: this.user.cpf,
+      'NOME DA ESTRUTURA': this.structure.name,
+      'NOTA FINAL DO CURSISTA': this.completion.grade,
+      'PERCENTUAL DE FREQUÊNCIA DO CURSISTA': this.formatPercentage(
+        this.completion.presence,
+      ),
       'NOME DA PLATAFORMA': this.template.front.organization,
-      'CARGA HORÁRIA': workload,
-      'DATA DE INÍCIO DA ATIVIDADE': formatDate(frontData.startDate),
-      'DATA DE TÉRMINO DA ATIVIDADE': formatDate(frontData.endDate),
+      'CARGA HORÁRIA': this.getWorkload(),
+      'DATA DE INÍCIO DA ATIVIDADE': this.formatDate(
+        this.template.front.startDate,
+      ),
+      'DATA DE TÉRMINO DA ATIVIDADE': this.formatDate(
+        this.template.front.endDate,
+      ),
     };
   }
 
@@ -183,9 +199,27 @@ export class CertificateBuilderService {
 
     return {
       ...this.template.back,
+      organization: this.template.front.organization,
       background,
       content,
       qrcode,
+      workload: this.getWorkload(),
+      currentDate: this.formatDate(new Date()),
+      'NOME COMPLETO DO CURSISTA': this.user.name,
+      CPF: this.user.cpf,
+      'NOME DA ESTRUTURA': this.structure.name,
+      'NOTA FINAL DO CURSISTA': this.completion.grade,
+      'PERCENTUAL DE FREQUÊNCIA DO CURSISTA': this.formatPercentage(
+        this.completion.presence,
+      ),
+      'NOME DA PLATAFORMA': this.template.front.organization,
+      'CARGA HORÁRIA': this.getWorkload(),
+      'DATA DE INÍCIO DA ATIVIDADE': this.formatDate(
+        this.template.front.startDate,
+      ),
+      'DATA DE TÉRMINO DA ATIVIDADE': this.formatDate(
+        this.template.front.endDate,
+      ),
     };
   }
 
@@ -206,5 +240,23 @@ export class CertificateBuilderService {
         description: child.description,
       })),
     };
+  }
+
+  private formatDate(date: Date) {
+    return new Date(date).toLocaleDateString('pt-BR');
+  }
+
+  private getWorkload() {
+    const baseWorkload = this.template.front.workload;
+    const presenceWorkload = this.structure.presenceWorkload;
+    const attendanceWorkload = this.structure.attendanceWorkload;
+
+    return this.template.front.sumPresenceWorkload
+      ? baseWorkload + presenceWorkload
+      : baseWorkload + attendanceWorkload;
+  }
+
+  private formatPercentage(percentage: number) {
+    return `${percentage.toFixed(1)}%`;
   }
 }

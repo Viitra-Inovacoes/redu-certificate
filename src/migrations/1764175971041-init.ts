@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class Migrations1763823931040 implements MigrationInterface {
-  name = 'Migrations1763823931040';
+export class Init1764175971041 implements MigrationInterface {
+  name = 'Init1764175971041';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
@@ -32,16 +32,16 @@ export class Migrations1763823931040 implements MigrationInterface {
       `CREATE INDEX "IDX_e22a8748b8d84e103ee1788277" ON "signatures" ("templateId") `,
     );
     await queryRunner.query(
-      `CREATE TABLE "templates" ("id" uuid NOT NULL DEFAULT uuidv7(), "blueprintId" uuid NOT NULL, "structureId" uuid, "finished" boolean NOT NULL DEFAULT false, "generationEnabled" boolean NOT NULL DEFAULT true, "front" jsonb, "back" jsonb, "requirements" jsonb, "metadata" jsonb, "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), CONSTRAINT "REL_25aaee3c7ea0b28f6d56594db8" UNIQUE ("structureId"), CONSTRAINT "PK_515948649ce0bbbe391de702ae5" PRIMARY KEY ("id"))`,
+      `CREATE TABLE "templates" ("id" uuid NOT NULL DEFAULT uuidv7(), "blueprintId" uuid NOT NULL, "structureId" uuid, "finished" boolean NOT NULL DEFAULT false, "generationEnabled" boolean NOT NULL DEFAULT true, "downloadButtonLabel" character varying, "front" jsonb, "back" jsonb, "requirements" jsonb, "metadata" jsonb, "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), CONSTRAINT "REL_25aaee3c7ea0b28f6d56594db8" UNIQUE ("structureId"), CONSTRAINT "PK_515948649ce0bbbe391de702ae5" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
       `CREATE UNIQUE INDEX "IDX_25aaee3c7ea0b28f6d56594db8" ON "templates" ("structureId") `,
     );
     await queryRunner.query(
-      `CREATE UNIQUE INDEX "IDX_5f6aa59a652dfc47709eac71d4" ON "templates" ("blueprintId") `,
+      `CREATE INDEX "IDX_5f6aa59a652dfc47709eac71d4" ON "templates" ("blueprintId") `,
     );
     await queryRunner.query(
-      `CREATE TABLE "certificates" ("id" uuid NOT NULL DEFAULT uuidv7(), "templateId" uuid NOT NULL, "validationCode" character varying NOT NULL, "userId" uuid NOT NULL, "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), CONSTRAINT "UQ_0ffa09dbc85da79f023e3cef7fe" UNIQUE ("validationCode"), CONSTRAINT "PK_e4c7e31e2144300bea7d89eb165" PRIMARY KEY ("id"))`,
+      `CREATE TABLE "certificates" ("id" uuid NOT NULL DEFAULT uuidv7(), "templateId" uuid NOT NULL, "validationCode" character varying NOT NULL, "userId" uuid NOT NULL, "migrated" boolean NOT NULL DEFAULT false, "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), CONSTRAINT "UQ_0ffa09dbc85da79f023e3cef7fe" UNIQUE ("validationCode"), CONSTRAINT "PK_e4c7e31e2144300bea7d89eb165" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
       `CREATE UNIQUE INDEX "IDX_4a0a01a8008543f68d962d96e1" ON "certificates" ("templateId", "userId") `,
@@ -53,7 +53,7 @@ export class Migrations1763823931040 implements MigrationInterface {
       `CREATE UNIQUE INDEX "IDX_0ffa09dbc85da79f023e3cef7f" ON "certificates" ("validationCode") `,
     );
     await queryRunner.query(
-      `CREATE TABLE "users" ("id" uuid NOT NULL DEFAULT uuidv7(), "clientId" uuid NOT NULL, "reduUserId" integer NOT NULL, "name" character varying NOT NULL, "email" character varying, "description" character varying, CONSTRAINT "PK_a3ffb1c0c8416b9fc6f907b7433" PRIMARY KEY ("id"))`,
+      `CREATE TABLE "users" ("id" uuid NOT NULL DEFAULT uuidv7(), "clientId" uuid NOT NULL, "reduUserId" integer NOT NULL, "name" character varying NOT NULL, "cpf" character varying, "email" character varying, "description" character varying, CONSTRAINT "PK_a3ffb1c0c8416b9fc6f907b7433" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
       `CREATE UNIQUE INDEX "IDX_459312150f1a42658ab66a8f44" ON "users" ("reduUserId", "clientId") `,

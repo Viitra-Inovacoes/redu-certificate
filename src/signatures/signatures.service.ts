@@ -7,6 +7,8 @@ import { Repository } from 'typeorm';
 import { Signature } from 'src/signatures/entities/signature.entity';
 import { i18n } from 'src/i18n';
 import { Template } from 'src/templates/entities/template.entity';
+import { SignatureResponseDto } from 'src/signatures/dto/signature-response.dto';
+import { plainToInstance } from 'class-transformer';
 
 @Injectable()
 export class SignaturesService {
@@ -47,21 +49,25 @@ export class SignaturesService {
     return await this.signatureRepository.save(newSignature);
   }
 
-  async getInfo(templateId: string) {
+  async serializeAllByTemplateId(templateId: string) {
     const signatures = await this.findByTemplateId(templateId);
-    const files = await Promise.all(
-      signatures.map((signature) => this.s3.getFile(signature.getSpacesKey())),
-    );
+    return Promise.all(signatures.map((s) => this.serialize(s)));
+  }
 
-    return Promise.all(
-      signatures.map(async (signature, index) => ({
-        id: signature.id,
+  async serialize(signature: Signature) {
+    const metadata = await this.s3.getMetadata(signature.getSpacesKey());
+    const data = {
+      ...signature,
+      file: {
+        ...metadata,
         url: await this.s3.getPresignedUrl(signature.getSpacesKey()),
-        name: signature.name,
-        role: signature.role,
-        fileName: files[index].Metadata?.originalName,
-      })),
-    );
+      },
+    };
+
+    return plainToInstance(SignatureResponseDto, data, {
+      excludeExtraneousValues: true,
+      enableImplicitConversion: true,
+    });
   }
 
   async findByTemplateId(templateId: string) {

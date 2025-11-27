@@ -16,10 +16,7 @@ import * as path from 'path';
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    TypeOrmModule.forRoot({
-      ...dataSourceOptions,
-      migrationsRun: true,
-    }),
+    TypeOrmModule.forRoot(dataSourceOptions),
     I18nModule.forRoot({
       fallbackLanguage: 'pt',
       loaderOptions: {

@@ -3,6 +3,7 @@ import {
   DeleteObjectCommand,
   DeleteObjectsCommand,
   GetObjectCommand,
+  HeadObjectCommand,
   ListObjectsV2Command,
   PutObjectCommand,
   S3Client,
@@ -38,6 +39,21 @@ export class S3Service {
     return await this.client.send(command);
   }
 
+  async getMetadata(key: string) {
+    const command = new HeadObjectCommand({
+      Bucket: this.bucket,
+      Key: key,
+    });
+
+    const data = await this.client.send(command);
+    const originalName = decodeURIComponent(data.Metadata?.originalname ?? '');
+    return {
+      name: originalName,
+      size: data.ContentLength,
+      contentType: data.ContentType,
+    };
+  }
+
   async getFile(key: string) {
     console.log('getFile', {
       key,
@@ -59,6 +75,7 @@ export class S3Service {
       file: file.originalname,
       mimetype: file.mimetype,
       buffer: file.buffer.length,
+      originalName: file.originalname,
     });
 
     const command = new PutObjectCommand({
@@ -69,7 +86,7 @@ export class S3Service {
       ACL: 'private',
 
       Metadata: {
-        originalName: file.originalname,
+        originalName: encodeURIComponent(file.originalname),
       },
     });
 
@@ -123,6 +140,8 @@ export class S3Service {
   }
 
   async deleteFolder(folder: string) {
+    if (!folder) return;
+
     const command = new ListObjectsV2Command({
       Bucket: this.bucket,
       Prefix: folder,

@@ -1,17 +1,20 @@
 services:
-  api:
-    image: viitrainovacoes/redu-certificate-test:latest
+  api.certificate:
+    # image: viitrainovacoes/redu-certificate-test:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
       - 3001:3001
     env_file:
       - .env
     depends_on:
-      - db
+      - db.certificate
     restart: always
     networks:
       - redu_network
 
-  db:
+  db.certificate:
     image: postgres:18-alpine
     ports:
       - 5432:5432

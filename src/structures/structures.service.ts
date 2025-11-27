@@ -15,20 +15,22 @@ import { FindOneOptions, Repository } from 'typeorm';
 
 export type Children = Exclude<BackContentType, BackContentType.CUSTOM>;
 
-export type StructureData = {
+export type ReduStructure = {
   id: number;
   name: string;
   description: string;
   attendanceWorkload: number;
+  presenceWorkload: number;
 };
+
 export type ChildrenData = {
-  collection: StructureData[];
+  collection: ReduStructure[];
   pagination: {
     totalCount: number;
   };
 };
 
-export type CompletionData = {
+export type Completion = {
   progress: number;
   presence: number;
   grade: number;
@@ -106,7 +108,7 @@ export class StructuresService {
     structureId: number;
   }) {
     const url = this.buildUrl({ structure });
-    return await this.reduApi.get<StructureData>(url);
+    return await this.reduApi.get<ReduStructure>(url);
   }
 
   async getChildren(structure: Structure, children: Children) {
@@ -119,11 +121,12 @@ export class StructuresService {
 
   async getCompletion(
     structure: Structure,
-    gradeType?: GradeType,
+    gradeType: GradeType = GradeType.STRUCTURE,
     gradeId?: number,
   ) {
-    const queryParams: Record<string, string> = {};
-    if (gradeType) queryParams.grade_type = gradeType;
+    const queryParams: Record<string, string> = {
+      grade_type: gradeType,
+    };
     if (gradeId) queryParams.grade_id = gradeId.toString();
     const url = this.buildUrl({
       structure,
@@ -131,7 +134,7 @@ export class StructuresService {
       params: queryParams,
     });
 
-    const completion = await this.reduApi.get<CompletionData>(url);
+    const completion = await this.reduApi.get<Completion>(url);
     return {
       progress: completion.progress,
       presence: completion.presence,

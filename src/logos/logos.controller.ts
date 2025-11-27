@@ -11,8 +11,9 @@ import { LogosService } from './logos.service';
 import { CreateLogoDto } from './dto/create-logo.dto';
 import { LogoSchema } from './dto/logo-schema';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiBody, ApiConsumes } from '@nestjs/swagger';
+import { ApiBody, ApiConsumes, ApiResponse } from '@nestjs/swagger';
 import { FileValidationFactory } from 'src/validators/file-validation.factory';
+import { LogoResponseDto } from 'src/logos/dto/logo-response.dto';
 @Controller('logos')
 export class LogosController {
   constructor(private readonly logosService: LogosService) {}
@@ -21,7 +22,8 @@ export class LogosController {
   @ApiConsumes('multipart/form-data')
   @ApiBody({ type: LogoSchema })
   @UseInterceptors(FileInterceptor('file'))
-  create(
+  @ApiResponse({ type: LogoResponseDto })
+  async create(
     @Body() body: CreateLogoDto,
     @UploadedFile(
       FileValidationFactory.createValidationPipe({
@@ -32,7 +34,8 @@ export class LogosController {
     )
     file: Express.Multer.File,
   ) {
-    return this.logosService.create(body, file);
+    const logo = await this.logosService.create(body, file);
+    return this.logosService.serialize(logo);
   }
 
   @Delete(':id')
