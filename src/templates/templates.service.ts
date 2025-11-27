@@ -159,7 +159,7 @@ export class TemplatesService {
         ...(body as Template),
         metadata: {
           hasBackPage:
-            Boolean(body.back?.content) || body.metadata?.hasBackPage,
+            body.metadata?.hasBackPage,
           customBackground: {
             front:
               body.metadata?.customBackground?.front ||
