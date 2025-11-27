@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
+import { Type, Transform } from 'class-transformer';
 import {
   IsBoolean,
   IsEnum,
@@ -196,11 +196,13 @@ class Back {
 
 export class MetadataCustomBackground {
   @ApiProperty({ type: 'boolean' })
+  @Transform(({ value }) => (value === 'true') )
   @IsBoolean()
   @IsOptional()
   front?: boolean;
 
   @ApiProperty({ type: 'boolean' })
+  @Transform(({ value }) => (value === 'true') )
   @IsBoolean()
   @IsOptional()
   back?: boolean;
@@ -208,6 +210,7 @@ export class MetadataCustomBackground {
 
 export class Metadata {
   @ApiProperty({ type: 'boolean' })
+  @Transform(({ value }) => (value === 'true') )
   @IsBoolean()
   @IsOptional()
   hasBackPage?: boolean;
