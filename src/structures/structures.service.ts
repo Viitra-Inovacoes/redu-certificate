@@ -20,6 +20,7 @@ export type ReduStructure = {
   name: string;
   description: string;
   attendanceWorkload: number;
+  presenceWorkload: number;
 };
 
 export type ChildrenData = {
@@ -120,11 +121,12 @@ export class StructuresService {
 
   async getCompletion(
     structure: Structure,
-    gradeType?: GradeType,
+    gradeType: GradeType = GradeType.STRUCTURE,
     gradeId?: number,
   ) {
-    const queryParams: Record<string, string> = {};
-    if (gradeType) queryParams.grade_type = gradeType;
+    const queryParams: Record<string, string> = {
+      grade_type: gradeType,
+    };
     if (gradeId) queryParams.grade_id = gradeId.toString();
     const url = this.buildUrl({
       structure,

@@ -13,6 +13,7 @@ export type ReduUser = {
   cpf: string;
   email: string;
   description: string;
+  avatar: string;
 };
 
 @Injectable()
@@ -44,6 +45,15 @@ export class UsersService {
 
   async findOrCreate(reduUser: ReduUser) {
     try {
+      await this.userRepository.update(
+        { reduUserId: reduUser.id },
+        {
+          name: reduUser.name,
+          email: reduUser.email,
+          description: reduUser.description,
+          avatar: reduUser.avatar,
+        },
+      );
       return await this.findOneBy({ where: { reduUserId: reduUser.id } });
     } catch (error) {
       if (!(error instanceof NotFoundException)) throw error;

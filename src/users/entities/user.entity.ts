@@ -40,4 +40,7 @@ export class User {
 
   @Column('varchar', { nullable: true })
   description: string;
+
+  @Column('varchar', { nullable: true })
+  avatar: string;
 }

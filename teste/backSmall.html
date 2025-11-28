@@ -203,17 +203,19 @@
         <hr class="divider">
       </div>
 
-
+      {{#if content.children}}
+      {{#each content.children}}
       <ol class="content-list">
-        {{#each content.children}}
         <div>
           <li>
             {{this.name}}
           </li>
-          <p>{{this.description}}</p>
         </div>
-        {{/each}}
       </ol>
+      {{/each}}
+      {{else}}
+      {{{content}}}
+      {{/if}}
 
       <div class="bottom">
         <div class="course-info">

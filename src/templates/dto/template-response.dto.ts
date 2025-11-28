@@ -8,6 +8,23 @@ import {
   GradeType,
 } from 'src/templates/entities/template.entity';
 
+class File {
+  @ApiProperty({ type: 'string' })
+  @Expose()
+  name: string;
+
+  @ApiProperty({ type: 'number' })
+  @Expose()
+  size: number;
+
+  @ApiProperty({ type: 'string' })
+  @Expose()
+  contentType: string;
+
+  @ApiProperty({ type: 'string' })
+  @Expose()
+  url: string;
+}
 class Grade {
   @ApiProperty({
     type: 'string',
@@ -93,6 +110,11 @@ class Front {
   @ApiProperty({ type: 'string' })
   @Expose()
   info: string;
+
+  @ApiProperty({ type: File })
+  @Type(() => File)
+  @Expose()
+  background?: File;
 }
 
 class BackContent {
@@ -125,6 +147,11 @@ class Back {
   @Type(() => BackContent)
   @Expose()
   content: BackContent;
+
+  @ApiProperty({ type: File })
+  @Type(() => File)
+  @Expose()
+  background?: File;
 }
 
 export class MetadataCustomBackground {

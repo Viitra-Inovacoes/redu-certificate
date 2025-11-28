@@ -161,14 +161,16 @@ export class CertificatesService {
         relations: { template: { structure: true } },
       });
       return {
-        canGenerate: await this.requirements.canGenerate(certificate.template),
+        downloadButtonLabel: template.downloadButtonLabel,
+        canGenerate: await this.requirements.canGenerate(template),
         outdated: certificate.outdated,
-        requirements: certificate.template.requirements,
+        requirements: template.requirements,
         urls: await this.getUrls(certificate),
       };
     } catch (error) {
       if (!(error instanceof NotFoundException)) throw error;
       return {
+        downloadButtonLabel: template.downloadButtonLabel,
         canGenerate: await this.requirements.canGenerate(template),
         outdated: false,
         requirements: template.requirements,
@@ -234,6 +236,7 @@ export class CertificatesService {
         name: certificate.user.name,
         email: certificate.user.email,
         description: certificate.user.description,
+        avatar: certificate.user.avatar,
       },
     };
   }
@@ -275,6 +278,7 @@ export class CertificatesService {
         },
         relations: { template: { structure: true } },
       });
+      certificate.createdAt = new Date();
       return this.generateValidationCode(certificate);
     } catch (error) {
       if (!(error instanceof NotFoundException)) throw error;

@@ -46,7 +46,6 @@ export class S3Service {
     });
 
     const data = await this.client.send(command);
-    console.log('data', data);
     const originalName = decodeURIComponent(data.Metadata?.originalname ?? '');
     return {
       name: originalName,

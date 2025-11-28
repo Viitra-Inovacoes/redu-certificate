@@ -10,10 +10,11 @@ import {
 import { Signature } from 'src/signatures/entities/signature.entity';
 import { Logo } from 'src/logos/entities/logo.entity';
 import {
+  Completion,
   ReduStructure,
   StructuresService,
 } from 'src/structures/structures.service';
-import { UsersService } from 'src/users/users.service';
+import { ReduUser, UsersService } from 'src/users/users.service';
 
 export type Page = {
   html: string;
@@ -26,6 +27,8 @@ export class CertificateBuilderService {
   private readonly QR_CODE_BASE_URL = process.env.QR_CODE_BASE_URL!;
   private template: Template;
   private structure: ReduStructure;
+  private completion: Completion;
+  private user: ReduUser;
   private validationCode: string;
 
   constructor(
@@ -38,9 +41,15 @@ export class CertificateBuilderService {
   async build(template: Template, validationCode: string) {
     this.template = template;
     this.validationCode = validationCode;
-    this.structure = await this.structureService.getReduStructure(
-      this.template.structure,
-    );
+    const [structure, user, completion] = await Promise.all([
+      this.structureService.getReduStructure(this.template.structure),
+      this.usersService.getReduUser(),
+      this.structureService.getCompletion(this.template.structure),
+    ]);
+
+    this.structure = structure;
+    this.user = user;
+    this.completion = completion;
 
     const [front, back] = await Promise.all([
       this.generateFrontPage(),
@@ -89,6 +98,8 @@ export class CertificateBuilderService {
     const templateKey = this.template.blueprint.getS3Key(blueprintTemplateKind);
     return this.getBaseHandlebarsTemplate(templateKey)
       .then((handlebars) => handlebars(data))
+      .then((html) => Handlebars.compile(html))
+      .then((handlebars) => handlebars(data))
       .then((html) => this.render(html));
   }
 
@@ -113,11 +124,10 @@ export class CertificateBuilderService {
   }
 
   private async getFrontData() {
-    const [signatures, logos, background, user, qrcode] = await Promise.all([
+    const [signatures, logos, background, qrcode] = await Promise.all([
       this.getSignatures(),
       this.getLogos(),
       this.getBackground('front'),
-      this.usersService.getReduUser(),
       this.generateQRCode(),
     ]);
 
@@ -129,10 +139,13 @@ export class CertificateBuilderService {
       background,
       qrcode,
       currentDate: this.formatDate(new Date()),
-      'NOME COMPLETO DO ESTUDANTE': user.name,
-      CPF: user.cpf,
+      'NOME COMPLETO DO CURSISTA': this.user.name,
+      CPF: this.user.cpf,
       'NOME DA ESTRUTURA': this.structure.name,
-      'NOTA MÍNIMA PARA APROVAÇÃO': this.template?.requirements?.grade?.value,
+      'NOTA FINAL DO CURSISTA': this.completion.grade,
+      'PERCENTUAL DE FREQUÊNCIA DO CURSISTA': this.formatPercentage(
+        this.completion.presence,
+      ),
       'NOME DA PLATAFORMA': this.template.front.organization,
       'CARGA HORÁRIA': this.getWorkload(),
       'DATA DE INÍCIO DA ATIVIDADE': this.formatDate(
@@ -185,11 +198,27 @@ export class CertificateBuilderService {
 
     return {
       ...this.template.back,
+      organization: this.template.front.organization,
       background,
       content,
       qrcode,
       workload: this.getWorkload(),
       currentDate: this.formatDate(new Date()),
+      'NOME COMPLETO DO CURSISTA': this.user.name,
+      CPF: this.user.cpf,
+      'NOME DA ESTRUTURA': this.structure.name,
+      'NOTA FINAL DO CURSISTA': this.completion.grade,
+      'PERCENTUAL DE FREQUÊNCIA DO CURSISTA': this.formatPercentage(
+        this.completion.presence,
+      ),
+      'NOME DA PLATAFORMA': this.template.front.organization,
+      'CARGA HORÁRIA': this.getWorkload(),
+      'DATA DE INÍCIO DA ATIVIDADE': this.formatDate(
+        this.template.front.startDate,
+      ),
+      'DATA DE TÉRMINO DA ATIVIDADE': this.formatDate(
+        this.template.front.endDate,
+      ),
     };
   }
 
@@ -217,8 +246,16 @@ export class CertificateBuilderService {
   }
 
   private getWorkload() {
+    const baseWorkload = this.template.front.workload;
+    const presenceWorkload = this.structure.presenceWorkload;
+    const attendanceWorkload = this.structure.attendanceWorkload;
+
     return this.template.front.sumPresenceWorkload
-      ? this.template.front.workload + this.structure.attendanceWorkload
-      : this.template.front.workload;
+      ? baseWorkload + presenceWorkload
+      : baseWorkload + attendanceWorkload;
+  }
+
+  private formatPercentage(percentage: number) {
+    return `${percentage.toFixed(1)}%`;
   }
 }

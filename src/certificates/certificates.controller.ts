@@ -48,7 +48,6 @@ export class CertificatesController {
 
   @Get('validate/:validationCode')
   findOneByValidationCode(@Param('validationCode') validationCode: string) {
-    console.log('findOneByValidationCode', validationCode);
     return this.certificatesService.getValidationInfo(validationCode);
   }
 

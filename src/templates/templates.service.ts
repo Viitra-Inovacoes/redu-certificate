@@ -27,7 +27,6 @@ import { LogosService } from 'src/logos/logos.service';
 import { SignaturesService } from 'src/signatures/signatures.service';
 import { CertificatesService } from 'src/certificates/certificates.service';
 import { CloneTemplateDto } from 'src/templates/dto/clone-template.dto';
-import { Client } from 'src/client/entities/client.entity';
 import { Logo } from 'src/logos/entities/logo.entity';
 import { Signature } from 'src/signatures/entities/signature.entity';
 import { plainToInstance } from 'class-transformer';
@@ -64,12 +63,26 @@ export class TemplatesService {
   }
 
   async serialize(template: Template) {
+    const [frontBackground, backBackground, logos, signatures] =
+      await Promise.all([
+        this.getBackgroundInfo(template, 'front'),
+        this.getBackgroundInfo(template, 'back'),
+        this.logosService.serializeAllByTemplateId(template.id),
+        this.signaturesService.serializeAllByTemplateId(template.id),
+      ]);
+
     const data = {
       ...template,
-      logos: await this.logosService.serializeAllByTemplateId(template.id),
-      signatures: await this.signaturesService.serializeAllByTemplateId(
-        template.id,
-      ),
+      front: {
+        ...template.front,
+        background: frontBackground,
+      },
+      back: {
+        ...template.back,
+        background: backBackground,
+      },
+      logos,
+      signatures,
     };
 
     return plainToInstance(TemplateResponseDto, data, {
@@ -84,7 +97,6 @@ export class TemplatesService {
     OriginalStructureId: number,
   ) {
     const { structures } = body;
-    const client = await this.clientService.getClient();
     const originalTemplate = await this.findOneBy({
       where: {
         structure: {
@@ -101,13 +113,12 @@ export class TemplatesService {
 
     await Promise.all(
       structures.map((structure: Structure) =>
-        this.cloneOne(client, originalTemplate, structure, logos, signatures),
+        this.cloneOne(originalTemplate, structure, logos, signatures),
       ),
     );
   }
 
   async cloneOne(
-    client: Client,
     original: Template,
     structure: Structure,
     logos: Logo[],
@@ -118,12 +129,10 @@ export class TemplatesService {
       structure.structureId,
     );
 
-    structure = template.structure;
-
     template = {
       ...original,
       id: template.id,
-      structure,
+      structure: template.structure,
     } as Template;
 
     try {
@@ -135,6 +144,7 @@ export class TemplatesService {
         ...signatures.map((signature) =>
           this.signaturesService.copyToTemplate(signature, template),
         ),
+        this.copyBackground(original, template),
       ]);
     } catch (error) {
       await this.s3.deleteFolder(template.folderKey);
@@ -158,8 +168,7 @@ export class TemplatesService {
       await entityManager.update(Template, template.id, {
         ...(body as Template),
         metadata: {
-          hasBackPage:
-            body.metadata?.hasBackPage,
+          hasBackPage: body.metadata?.hasBackPage,
           customBackground: {
             front:
               body.metadata?.customBackground?.front ||
@@ -179,11 +188,9 @@ export class TemplatesService {
   }
 
   async delete(id: string) {
-    const template = await this.findOne(id);
-
-    return this.dataSource.transaction(async (entityManager) => {
-      await entityManager.delete(Template, template.id);
-      await this.s3.deleteFolder(template.folderKey);
+    await this.templateRepository.update(id, {
+      generationEnabled: false,
+      finished: false,
     });
   }
 
@@ -200,8 +207,11 @@ export class TemplatesService {
   }
 
   async resetTemplate(template: Template) {
+    const blueprint = await this.clientService.getDefaultBlueprint();
+
     template = {
       ...template,
+      blueprint,
       front: undefined,
       back: undefined,
       requirements: undefined,
@@ -301,5 +311,35 @@ export class TemplatesService {
     if (!file) return;
     const key = template.getS3Key({ kind: `${kind}Background` });
     return this.s3.uploadFile(file, key);
+  }
+
+  private async getBackgroundInfo(template: Template, kind: 'front' | 'back') {
+    if (!template.metadata.customBackground[kind]) return;
+
+    const key = template.getS3Key({ kind: `${kind}Background` });
+    const metadata = await this.s3.getMetadata(key);
+
+    return {
+      name: metadata.name,
+      size: metadata.size,
+      contentType: metadata.contentType,
+      url: await this.s3.getPresignedUrl(key),
+    };
+  }
+
+  private async copyBackground(source: Template, destination: Template) {
+    if (source.metadata.customBackground.front) {
+      await this.s3.copyFile(
+        source.getS3Key({ kind: 'frontBackground' }),
+        destination.getS3Key({ kind: 'frontBackground' }),
+      );
+    }
+
+    if (source.metadata.customBackground.back) {
+      await this.s3.copyFile(
+        source.getS3Key({ kind: 'backBackground' }),
+        destination.getS3Key({ kind: 'backBackground' }),
+      );
+    }
   }
 }
