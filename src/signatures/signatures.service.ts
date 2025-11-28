@@ -1,5 +1,6 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateSignatureDto } from './dto/create-signature.dto';
+import { UpdateSignatureDto } from './dto/update-signature.dto';
 import { S3Service } from 'src/s3/s3.service';
 import { v7 as uuidv7 } from 'uuid';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -32,6 +33,34 @@ export class SignaturesService {
       await this.s3.deleteFile(signature.getSpacesKey());
       throw error;
     }
+  }
+
+  async update(
+    id: string,
+    body: UpdateSignatureDto,
+    file: Express.Multer.File,
+  ) {
+    const signature = await this.findOne(id);
+
+    try {
+      await this.signatureRepository.update(id, {
+        name: body.name,
+        role: body.role,
+      });
+      if (file) {
+        await this.s3.uploadFile(file, signature.getSpacesKey());
+      }
+      return await this.findOne(id);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async findOne(id: string) {
+    const signature = await this.signatureRepository.findOne({ where: { id } });
+    if (!signature)
+      throw new NotFoundException(i18n.t('error.NOT_FOUND.SIGNATURE'));
+    return signature;
   }
 
   async copyToTemplate(signature: Signature, template: Template) {

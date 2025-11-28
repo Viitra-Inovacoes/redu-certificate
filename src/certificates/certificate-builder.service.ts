@@ -41,7 +41,6 @@ export class CertificateBuilderService {
   async build(template: Template, validationCode: string) {
     this.template = template;
     this.validationCode = validationCode;
-
     const [structure, user, completion] = await Promise.all([
       this.structureService.getReduStructure(this.template.structure),
       this.usersService.getReduUser(),
