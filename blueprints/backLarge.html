@@ -30,7 +30,6 @@
       box-sizing: border-box;
       width: 297mm;
       height: 210mm;
-      border-radius: 24px;
       background: url({{{background}}}) no-repeat center/cover;
       background-color: white;
       display: flex;
@@ -202,7 +201,13 @@
       <div class="top">
         <h1>{{title}}</h1>
         <h2>{{subtitle}}</h2>
+        {{#if title}}
+        {{! runs if title is truthy }}
         <hr class="divider">
+        {{else if subtitle}}
+        {{! runs if no title but subtitle is truthy }}
+        <hr class="divider">
+        {{/if}}
       </div>
 
 

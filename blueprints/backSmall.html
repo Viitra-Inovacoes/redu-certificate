@@ -30,8 +30,7 @@
       box-sizing: border-box;
       width: 297mm;
       height: 210mm;
-      border-radius: 24px;
-      background: url(fundo.png) no-repeat center/cover;
+      background: url({{{background}}}) no-repeat center/cover;
       background-color: white;
       display: flex;
       justify-content: center;
@@ -100,11 +99,9 @@
     /* four rows and four columns, 16 items in total */
     .content-list {
       display: grid;
-      width: 100%;
-      grid-auto-flow: column dense;
-      grid-template-rows: repeat(14, 1fr);
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      grid-template-columns: repeat(4, 1fr);
       column-gap: 24px;
+      row-gap: 24px;
       padding: 0;
 
       li {
@@ -200,69 +197,45 @@
     <div class="content">
 
       <div class="top">
-        <h1>Título</h1>
-        <h2>Subtítulo</h2>
+        <h1>{{title}}</h1>
+        <h2>{{subtitle}}</h2>
+        {{#if title}}
+        {{! runs if title is truthy }}
         <hr class="divider">
+        {{else if subtitle}}
+        {{! runs if no title but subtitle is truthy }}
+        <hr class="divider">
+        {{/if}}
       </div>
 
-
+      {{#if content.children}}
+      {{#each content.children}}
       <ol class="content-list">
-        <li>Nome da Disciplina</li>
-        <li>Nome da Disciplina</li>
-        <li>Nome da Disciplina</li>
-        <li>Nome da Disciplina</li>
-        <li>Nome da Disciplina</li>
-        <li>Nome da Disciplina</li>
-        <li>Nome da Disciplina</li>
-        <li>Nome da Disciplina</li>
-        <li>Nome da Disciplina</li>
-        <li>Nome da Disciplina</li>
-        <li>Nome da Disciplina</li>
-        <li>Nome da Disciplina</li>
-        <li>Nome da Disciplina</li>
-        <li>Nome da Disciplina</li>
-        <li>Nome da Disciplina</li>
-        <li>Nome da Disciplina</li>
-        <li>Nome da Disciplina</li>
-        <li>Nome da Disciplina</li>
-        <li>Nome da Disciplina</li>
-        <li>Nome da Disciplina</li>
-        <li>Nome da Disciplina</li>
-        <li>Nome da Disciplina</li>
-        <li>Nome da Disciplina</li>
-        <li>Nome da Disciplina</li>
-        <li>Nome da Disciplina</li>
-        <li>Nome da Disciplina</li>
-        <li>Nome da Disciplina</li>
-        <li>Nome da Disciplina</li>
-        <li>Nome da Disciplina</li>
-        <li>Nome da Disciplina</li>
-        <li>Nome da Disciplina</li>
-        <li>Nome da Disciplina</li>
-        <li>Nome da Disciplina</li>
-        <li>Nome da Disciplina</li>
-        <li>Nome da Disciplina</li>
-        <li>Nome da Disciplina</li>
-        <li>Nome da Disciplina</li>
-        <li>Nome da Disciplina</li>
-        <li>Nome da Disciplina</li>
-        <li>Nome da Disciplina</li>
-        <li>Nome da Disciplina</li>
-        <li>Nome da Disciplina</li>
+        <div>
+          <li>
+            {{this.name}}
+          </li>
+        </div>
       </ol>
+      {{/each}}
+      {{else}}
+      <div style="width: 100%;">
+        {{{content}}}
+      </div>
+      {{/if}}
 
       <div class="bottom">
         <div class="course-info">
-          <p>Nome do Curso</p>
-          <p>Carga Horária: 00 horas</p>
+          <p>{{structure.name}}</p>
+          <p>Carga Horária: {{workload}} horas</p>
         </div>
 
         <div class="custom-footer">
-          <p>Texto que será adicionado no rodapé do certificado</p>
+          <p>{{footer}}</p>
         </div>
 
         <footer>
-          Documento emitido em 17/11/2025 pela Rede Social Educacional - REDU
+          Documento emitido em {{currentDate}} pela {{organization}}
         </footer>
       </div>
     </div>

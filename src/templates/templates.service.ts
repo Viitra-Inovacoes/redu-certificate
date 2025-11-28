@@ -73,14 +73,8 @@ export class TemplatesService {
 
     const data = {
       ...template,
-      front: {
-        ...template.front,
-        background: frontBackground,
-      },
-      back: {
-        ...template.back,
-        background: backBackground,
-      },
+      frontBackground,
+      backBackground,
       logos,
       signatures,
     };
@@ -212,9 +206,9 @@ export class TemplatesService {
     template = {
       ...template,
       blueprint,
-      front: undefined,
-      back: undefined,
-      requirements: undefined,
+      front: null,
+      back: null,
+      requirements: null,
       metadata: {
         hasBackPage: false,
         customBackground: {

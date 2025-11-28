@@ -21,7 +21,6 @@
       box-sizing: border-box;
       width: 297mm;
       height: 210mm;
-      border-radius: 24px;
       background: url({{{background}}}) no-repeat center/cover;
       background-color: white;
       display: flex;
@@ -45,6 +44,12 @@
       align-items: center;
       gap: 51px;
       align-self: stretch;
+
+      img {
+        height: 50px;
+        width: 100px;
+        object-fit: contain;
+      }
     }
 
     .main-content {
@@ -88,6 +93,7 @@
       img {
         height: 50px;
         width: 100px;
+        object-fit: contain;
       }
     }
 

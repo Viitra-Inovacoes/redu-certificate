@@ -39,7 +39,8 @@ export const configs: Record<ClientKey, ClientConfig> = {
     appKey: 'bmerE6W7teWF09nHOhEBh7ozabiR2c0X4embxXiBASU',
   },
   avaviitra: {
-    baseUrl: 'https://ava.viitra.in/api',
+    // baseUrl: 'https://ava.viitra.in/api',
+    baseUrl: 'http://localhost:3000/api',
     appKey: 'bmerE6W7teWF09nHOhEBh7ozabiR2c0X4embxXiBASU',
   },
   conectamaisedu: {

@@ -31,7 +31,7 @@
       width: 297mm;
       height: 210mm;
       border-radius: 24px;
-      background: url({{{background}}}) no-repeat center/cover;
+      background: url(backBackground.png) no-repeat center/cover;
       background-color: white;
       display: flex;
       justify-content: center;
@@ -198,37 +198,123 @@
     <div class="content">
 
       <div class="top">
-        <h1>{{title}}</h1>
-        <h2>{{subtitle}}</h2>
+        <h1>Título</h1>
+        <h2>Subtítulo</h2>
         <hr class="divider">
       </div>
 
-      {{#if content.children}}
-      {{#each content.children}}
+
       <ol class="content-list">
         <div>
           <li>
-            {{this.name}}
+            Nome da Disciplina
           </li>
+          <p>Uma pequena descrição do conteúdo</p>
+        </div>
+        <div>
+          <li>
+            Nome da Disciplina
+          </li>
+          <p>Uma pequena descrição do conteúdo</p>
+        </div>
+        <div>
+          <li>
+            Nome da Disciplina
+          </li>
+          <p>Uma pequena descrição do conteúdo</p>
+        </div>
+        <div>
+          <li>
+            Nome da Disciplina
+          </li>
+          <p>Uma pequena descrição do conteúdo</p>
+        </div>
+        <div>
+          <li>
+            Nome da Disciplina
+          </li>
+          <p>Uma pequena descrição do conteúdo</p>
+        </div>
+        <div>
+          <li>
+            Nome da Disciplina
+          </li>
+          <p>Uma pequena descrição do conteúdo</p>
+        </div>
+        <div>
+          <li>
+            Nome da Disciplina
+          </li>
+          <p>Uma pequena descrição do conteúdo</p>
+        </div>
+        <div>
+          <li>
+            Nome da Disciplina
+          </li>
+          <p>Uma pequena descrição do conteúdo</p>
+        </div>
+        <div>
+          <li>
+            Nome da Disciplina
+          </li>
+          <p>Uma pequena descrição do conteúdo</p>
+        </div>
+        <div>
+          <li>
+            Nome da Disciplina
+          </li>
+          <p>Uma pequena descrição do conteúdo</p>
+        </div>
+        <div>
+          <li>
+            Nome da Disciplina
+          </li>
+          <p>Uma pequena descrição do conteúdo</p>
+        </div>
+        <div>
+          <li>
+            Nome da Disciplina
+          </li>
+          <p>Uma pequena descrição do conteúdo</p>
+        </div>
+        <div>
+          <li>
+            Nome da Disciplina
+          </li>
+          <p>Uma pequena descrição do conteúdo</p>
+        </div>
+        <div>
+          <li>
+            Nome da Disciplina
+          </li>
+          <p>Uma pequena descrição do conteúdo</p>
+        </div>
+        <div>
+          <li>
+            Nome da Disciplina
+          </li>
+          <p>Uma pequena descrição do conteúdo</p>
+        </div>
+        <div>
+          <li>
+            Nome da Disciplina
+          </li>
+          <p>Uma pequena descrição do conteúdo</p>
         </div>
       </ol>
-      {{/each}}
-      {{else}}
-      {{{content}}}
-      {{/if}}
 
       <div class="bottom">
         <div class="course-info">
-          <p>{{structure.name}}</p>
-          <p>Carga Horária: {{workload}} horas</p>
+          <p>Nome do Curso</p>
+          <p>Carga Horária: 00 horas</p>
         </div>
 
         <div class="custom-footer">
-          <p>{{footer}}</p>
+          <p>Texto que será adicionado no rodapé do certificado</p>
         </div>
 
         <footer>
-          Documento emitido em {{currentDate}} pela {{organization}}
+          Documento emitido em 17/11/2025 pela Rede Social Educacional - REDU
         </footer>
       </div>
     </div>

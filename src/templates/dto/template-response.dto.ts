@@ -110,11 +110,6 @@ class Front {
   @ApiProperty({ type: 'string' })
   @Expose()
   info: string;
-
-  @ApiProperty({ type: File })
-  @Type(() => File)
-  @Expose()
-  background?: File;
 }
 
 class BackContent {
@@ -147,11 +142,6 @@ class Back {
   @Type(() => BackContent)
   @Expose()
   content: BackContent;
-
-  @ApiProperty({ type: File })
-  @Type(() => File)
-  @Expose()
-  background?: File;
 }
 
 export class MetadataCustomBackground {
@@ -193,10 +183,20 @@ export class TemplateResponseDto {
   @Expose()
   front?: Front;
 
+  @ApiProperty({ type: File })
+  @Type(() => File)
+  @Expose()
+  frontBackground?: File;
+
   @ApiProperty({ type: Back, required: false })
   @Type(() => Back)
   @Expose()
   back?: Back;
+
+  @ApiProperty({ type: File })
+  @Type(() => File)
+  @Expose()
+  backBackground?: File;
 
   @ApiProperty({ type: SignatureResponseDto })
   @Type(() => SignatureResponseDto)

@@ -147,6 +147,8 @@ export class CertificatesService {
       structureType,
       structureId,
       {
+        finished: true,
+        generationEnabled: true,
         relations: { structure: true },
       },
     );

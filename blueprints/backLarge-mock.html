@@ -31,7 +31,7 @@
       width: 297mm;
       height: 210mm;
       border-radius: 24px;
-      background: url(fundo.png) no-repeat center/cover;
+      background: url(backBackground.png) no-repeat center/cover;
       background-color: white;
       display: flex;
       justify-content: center;
@@ -100,9 +100,11 @@
     /* four rows and four columns, 16 items in total */
     .content-list {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      width: 100%;
+      grid-auto-flow: column dense;
+      grid-template-rows: repeat(14, 1fr);
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
       column-gap: 24px;
-      row-gap: 24px;
       padding: 0;
 
       li {
@@ -205,102 +207,48 @@
 
 
       <ol class="content-list">
-        <div>
-          <li>
-            Nome da Disciplina
-          </li>
-          <p>Uma pequena descrição do conteúdo</p>
-        </div>
-        <div>
-          <li>
-            Nome da Disciplina
-          </li>
-          <p>Uma pequena descrição do conteúdo</p>
-        </div>
-        <div>
-          <li>
-            Nome da Disciplina
-          </li>
-          <p>Uma pequena descrição do conteúdo</p>
-        </div>
-        <div>
-          <li>
-            Nome da Disciplina
-          </li>
-          <p>Uma pequena descrição do conteúdo</p>
-        </div>
-        <div>
-          <li>
-            Nome da Disciplina
-          </li>
-          <p>Uma pequena descrição do conteúdo</p>
-        </div>
-        <div>
-          <li>
-            Nome da Disciplina
-          </li>
-          <p>Uma pequena descrição do conteúdo</p>
-        </div>
-        <div>
-          <li>
-            Nome da Disciplina
-          </li>
-          <p>Uma pequena descrição do conteúdo</p>
-        </div>
-        <div>
-          <li>
-            Nome da Disciplina
-          </li>
-          <p>Uma pequena descrição do conteúdo</p>
-        </div>
-        <div>
-          <li>
-            Nome da Disciplina
-          </li>
-          <p>Uma pequena descrição do conteúdo</p>
-        </div>
-        <div>
-          <li>
-            Nome da Disciplina
-          </li>
-          <p>Uma pequena descrição do conteúdo</p>
-        </div>
-        <div>
-          <li>
-            Nome da Disciplina
-          </li>
-          <p>Uma pequena descrição do conteúdo</p>
-        </div>
-        <div>
-          <li>
-            Nome da Disciplina
-          </li>
-          <p>Uma pequena descrição do conteúdo</p>
-        </div>
-        <div>
-          <li>
-            Nome da Disciplina
-          </li>
-          <p>Uma pequena descrição do conteúdo</p>
-        </div>
-        <div>
-          <li>
-            Nome da Disciplina
-          </li>
-          <p>Uma pequena descrição do conteúdo</p>
-        </div>
-        <div>
-          <li>
-            Nome da Disciplina
-          </li>
-          <p>Uma pequena descrição do conteúdo</p>
-        </div>
-        <div>
-          <li>
-            Nome da Disciplina
-          </li>
-          <p>Uma pequena descrição do conteúdo</p>
-        </div>
+        <li>Nome da Disciplina</li>
+        <li>Nome da Disciplina</li>
+        <li>Nome da Disciplina</li>
+        <li>Nome da Disciplina</li>
+        <li>Nome da Disciplina</li>
+        <li>Nome da Disciplina</li>
+        <li>Nome da Disciplina</li>
+        <li>Nome da Disciplina</li>
+        <li>Nome da Disciplina</li>
+        <li>Nome da Disciplina</li>
+        <li>Nome da Disciplina</li>
+        <li>Nome da Disciplina</li>
+        <li>Nome da Disciplina</li>
+        <li>Nome da Disciplina</li>
+        <li>Nome da Disciplina</li>
+        <li>Nome da Disciplina</li>
+        <li>Nome da Disciplina</li>
+        <li>Nome da Disciplina</li>
+        <li>Nome da Disciplina</li>
+        <li>Nome da Disciplina</li>
+        <li>Nome da Disciplina</li>
+        <li>Nome da Disciplina</li>
+        <li>Nome da Disciplina</li>
+        <li>Nome da Disciplina</li>
+        <li>Nome da Disciplina</li>
+        <li>Nome da Disciplina</li>
+        <li>Nome da Disciplina</li>
+        <li>Nome da Disciplina</li>
+        <li>Nome da Disciplina</li>
+        <li>Nome da Disciplina</li>
+        <li>Nome da Disciplina</li>
+        <li>Nome da Disciplina</li>
+        <li>Nome da Disciplina</li>
+        <li>Nome da Disciplina</li>
+        <li>Nome da Disciplina</li>
+        <li>Nome da Disciplina</li>
+        <li>Nome da Disciplina</li>
+        <li>Nome da Disciplina</li>
+        <li>Nome da Disciplina</li>
+        <li>Nome da Disciplina</li>
+        <li>Nome da Disciplina</li>
+        <li>Nome da Disciplina</li>
       </ol>
 
       <div class="bottom">
