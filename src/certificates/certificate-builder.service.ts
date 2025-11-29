@@ -232,7 +232,7 @@ export class CertificateBuilderService {
     );
 
     return {
-      childrenCount: children.pagination.totalCount ?? 0,
+      childrenCount: children?.pagination?.totalCount ?? 0,
       children: children.collection.map((child) => ({
         id: child.id,
         name: child.name,
