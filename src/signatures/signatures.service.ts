@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateSignatureDto } from './dto/create-signature.dto';
 import { UpdateSignatureDto } from './dto/update-signature.dto';
 import { S3Service } from 'src/s3/s3.service';
@@ -19,15 +23,20 @@ export class SignaturesService {
     private readonly s3: S3Service,
   ) {}
 
-  async create(body: CreateSignatureDto, file: Express.Multer.File) {
+  async create(
+    templateId: string,
+    body: CreateSignatureDto,
+    file: Express.Multer.File,
+  ) {
     const signature = this.signatureRepository.create({
       id: uuidv7(),
+      templateId,
       ...body,
     });
 
     try {
       await this.s3.uploadFile(file, signature.getSpacesKey());
-      await this.checkCount(body.templateId);
+      await this.checkCount(templateId);
       return await this.signatureRepository.save(signature);
     } catch (error) {
       await this.s3.deleteFile(signature.getSpacesKey());
@@ -42,18 +51,14 @@ export class SignaturesService {
   ) {
     const signature = await this.findOne(id);
 
-    try {
-      await this.signatureRepository.update(id, {
-        name: body.name,
-        role: body.role,
-      });
-      if (file) {
-        await this.s3.uploadFile(file, signature.getSpacesKey());
-      }
-      return await this.findOne(id);
-    } catch (error) {
-      throw error;
-    }
+    await this.signatureRepository.update(id, {
+      name: body.name,
+      role: body.role,
+    });
+
+    if (file) await this.s3.uploadFile(file, signature.getSpacesKey());
+
+    return await this.findOne(id);
   }
 
   async findOne(id: string) {

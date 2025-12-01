@@ -14,6 +14,7 @@ export type I18nTranslations = {
         "INVALID_FILE_TYPE": string;
         "TEMPLATE": {
             "NOT_FINISHED": string;
+            "CONTENT_IS_REQUIRED": string;
         };
         "NOT_FOUND": {
             "M": string;

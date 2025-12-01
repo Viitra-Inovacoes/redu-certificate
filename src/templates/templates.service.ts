@@ -148,6 +148,7 @@ export class TemplatesService {
 
   async create(structureType: StructureType, structureId: number) {
     const template = await this.findOrInitialize(structureType, structureId);
+    console.log('template', template);
     return this.templateRepository.save(template);
   }
 
@@ -239,7 +240,6 @@ export class TemplatesService {
           },
         },
       );
-
       return this.resetTemplate(template);
     } catch (error) {
       if (!(error instanceof NotFoundException)) throw error;
@@ -249,7 +249,6 @@ export class TemplatesService {
         structureType,
         structureId,
       );
-
       return this.templateRepository.create({
         id: uuidv7(),
         blueprint,

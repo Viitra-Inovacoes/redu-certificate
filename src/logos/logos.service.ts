@@ -1,5 +1,4 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { CreateLogoDto } from './dto/create-logo.dto';
 import { S3Service } from 'src/s3/s3.service';
 import { v7 as uuidv7 } from 'uuid';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -18,15 +17,15 @@ export class LogosService {
     private readonly s3: S3Service,
   ) {}
 
-  async create(body: CreateLogoDto, file: Express.Multer.File) {
+  async create(templateId: string, file: Express.Multer.File) {
     const logo = this.logoRepository.create({
       id: uuidv7(),
-      ...body,
+      templateId,
     });
 
     try {
       await this.s3.uploadFile(file, logo.getSpacesKey());
-      await this.checkCount(body.templateId);
+      await this.checkCount(templateId);
       return await this.logoRepository.save(logo);
     } catch (error) {
       await this.s3.deleteFile(logo.getSpacesKey());
