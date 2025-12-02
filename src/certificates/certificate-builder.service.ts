@@ -196,11 +196,14 @@ export class CertificateBuilderService {
       this.generateQRCode(),
     ]);
 
+    const _content =
+      typeof content === 'string' || content.childrenCount > 0 ? content : '';
+
     return {
       ...this.template.back,
       organization: this.template.front.organization,
       background,
-      content,
+      content: _content,
       qrcode,
       workload: this.getWorkload(),
       currentDate: this.formatDate(new Date()),

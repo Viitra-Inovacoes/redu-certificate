@@ -10,7 +10,9 @@ import {
 export class RequirementsService {
   constructor(private readonly structureService: StructuresService) {}
 
-  async canGenerate({ requirements, structure }: Template) {
+  async canGenerate({ requirements, structure, generationEnabled }: Template) {
+    if (!generationEnabled) return false;
+
     const { afterDate, progress, presence, grade, enrollmentTime } =
       requirements || {};
 
