@@ -231,9 +231,12 @@ export class CertificateBuilderService {
       this.template.back.content.type,
     );
 
+    const rawCollection = children?.collection;
+    const collectionArray = Array.isArray(rawCollection) ? rawCollection : [];
+
     return {
-      childrenCount: children.pagination.totalCount ?? 0,
-      children: children.collection.map((child) => ({
+      childrenCount: children?.pagination?.totalCount ?? 0,
+      children: collectionArray.map((child) => ({
         id: child.id,
         name: child.name,
         description: child.description,
