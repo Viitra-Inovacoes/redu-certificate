@@ -64,6 +64,8 @@
         line-height: 48px;
         /* 150% */
         letter-spacing: -0.32px;
+        text-align: center;
+        width: 100%;
       }
 
       h2 {
@@ -76,6 +78,8 @@
         font-weight: 500;
         line-height: 24px;
         /* 150% */
+        text-align: center;
+        width: 100%;
       }
 
       hr {
@@ -85,46 +89,40 @@
       }
     }
 
+    .main-content {
+      width: 100%;
+      max-height: 80%;
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+      word-break: break-word;
+      overflow-wrap: anywhere;
+      overflow: hidden;
+    }
 
-    /* four rows and four columns, 16 items in total */
     .content-list {
       display: grid;
       width: 100%;
       grid-auto-flow: column dense;
       grid-template-rows: repeat(14, 1fr);
       grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      column-gap: 24px;
+      column-gap: 0px;
+      row-gap: 1px;
       padding: 0;
 
       li {
-        color: var(--Prymary-Colors-Primary-600, #3F51B5);
+        color: var(--Neutral-Colors-Neutral-600, #4B4B4B);
         font-feature-settings: 'liga' off;
 
         /* Caption/Caption 1 */
         font-size: 12px;
         font-style: normal;
         font-weight: 500;
-        line-height: 24px;
+        line-height: 11px;
         /* 200% */
         letter-spacing: -0.12px;
         list-style-position: inside;
         flex-direction: column;
-      }
-
-      p {
-        color: var(--Neutral-Colors-Neutral-600, #4B4B4B);
-        font-feature-settings: 'liga' off;
-
-        /* Caption/Caption 2 */
-        font-size: 12px;
-        font-style: normal;
-        font-weight: 400;
-        line-height: 16px;
-        /* 133.333% */
-        letter-spacing: -0.12px;
-
-        margin: 8px 0 0 0;
-        padding: 0;
       }
     }
 
@@ -141,7 +139,7 @@
         font-feature-settings: 'liga' off;
 
         /* Caption/Caption 1 */
-        font-size: 12px;
+        font-size: 14px;
         font-style: normal;
         font-weight: 500;
         line-height: 24px;
@@ -170,7 +168,6 @@
       text-align: center;
 
       /* Body/Body 4 */
-      font-family: "Public Sans";
       font-size: 12px;
       font-style: normal;
       font-weight: 400;
@@ -197,11 +194,13 @@
       </div>
 
 
-      <ol class="content-list">
-        {{#each content.children}}
-        <li>{{this.name}}</li>
-        {{/each}}
-      </ol>
+      <div class="main-content">
+        <ol class="content-list">
+          {{#each content.children}}
+          <li>{{this.name}}</li>
+          {{/each}}
+        </ol>
+      </div>
 
       <div class="bottom">
         <div class="course-info">

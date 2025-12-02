@@ -21,7 +21,7 @@
       box-sizing: border-box;
       width: 297mm;
       height: 210mm;
-      background: url({{{background}}}) no-repeat center/cover;
+      background: url(frontBackground.png) no-repeat center/cover;
       background-color: white;
       display: flex;
       justify-content: center;
@@ -85,46 +85,40 @@
       }
     }
 
+    .main-content {
+      width: 100%;
+      max-height: 80%;
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+      word-break: break-word;
+      overflow-wrap: anywhere;
+      overflow: hidden;
+    }
 
-    /* four rows and four columns, 16 items in total */
     .content-list {
       display: grid;
       width: 100%;
       grid-auto-flow: column dense;
       grid-template-rows: repeat(14, 1fr);
       grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      column-gap: 24px;
+      column-gap: 0px;
+      row-gap: 1px;
       padding: 0;
 
       li {
-        color: var(--Prymary-Colors-Primary-600, #3F51B5);
+        color: var(--Neutral-Colors-Neutral-600, #4B4B4B);
         font-feature-settings: 'liga' off;
 
         /* Caption/Caption 1 */
         font-size: 12px;
         font-style: normal;
         font-weight: 500;
-        line-height: 24px;
+        line-height: 11px;
         /* 200% */
         letter-spacing: -0.12px;
         list-style-position: inside;
         flex-direction: column;
-      }
-
-      p {
-        color: var(--Neutral-Colors-Neutral-600, #4B4B4B);
-        font-feature-settings: 'liga' off;
-
-        /* Caption/Caption 2 */
-        font-size: 12px;
-        font-style: normal;
-        font-weight: 400;
-        line-height: 16px;
-        /* 133.333% */
-        letter-spacing: -0.12px;
-
-        margin: 8px 0 0 0;
-        padding: 0;
       }
     }
 
@@ -141,7 +135,7 @@
         font-feature-settings: 'liga' off;
 
         /* Caption/Caption 1 */
-        font-size: 12px;
+        font-size: 14px;
         font-style: normal;
         font-weight: 500;
         line-height: 24px;
@@ -170,7 +164,6 @@
       text-align: center;
 
       /* Body/Body 4 */
-      font-family: "Public Sans";
       font-size: 12px;
       font-style: normal;
       font-weight: 400;
@@ -191,50 +184,51 @@
       </div>
 
 
-      <ol class="content-list">
-        <li>Nome da Disciplina</li>
-        <li>Nome da Disciplina</li>
-        <li>Nome da Disciplina</li>
-        <li>Nome da Disciplina</li>
-        <li>Nome da Disciplina</li>
-        <li>Nome da Disciplina</li>
-        <li>Nome da Disciplina</li>
-        <li>Nome da Disciplina</li>
-        <li>Nome da Disciplina</li>
-        <li>Nome da Disciplina</li>
-        <li>Nome da Disciplina</li>
-        <li>Nome da Disciplina</li>
-        <li>Nome da Disciplina</li>
-        <li>Nome da Disciplina</li>
-        <li>Nome da Disciplina</li>
-        <li>Nome da Disciplina</li>
-        <li>Nome da Disciplina</li>
-        <li>Nome da Disciplina</li>
-        <li>Nome da Disciplina</li>
-        <li>Nome da Disciplina</li>
-        <li>Nome da Disciplina</li>
-        <li>Nome da Disciplina</li>
-        <li>Nome da Disciplina</li>
-        <li>Nome da Disciplina</li>
-        <li>Nome da Disciplina</li>
-        <li>Nome da Disciplina</li>
-        <li>Nome da Disciplina</li>
-        <li>Nome da Disciplina</li>
-        <li>Nome da Disciplina</li>
-        <li>Nome da Disciplina</li>
-        <li>Nome da Disciplina</li>
-        <li>Nome da Disciplina</li>
-        <li>Nome da Disciplina</li>
-        <li>Nome da Disciplina</li>
-        <li>Nome da Disciplina</li>
-        <li>Nome da Disciplina</li>
-        <li>Nome da Disciplina</li>
-        <li>Nome da Disciplina</li>
-        <li>Nome da Disciplina</li>
-        <li>Nome da Disciplina</li>
-        <li>Nome da Disciplina</li>
-        <li>Nome da Disciplina</li>
-      </ol>
+      <div class="main-content">
+        <ol class="content-list">
+          <li>0. Tutoriais</li>
+          <li>1. Pautas e as gravações das reuniões da equipe</li>
+          <li>Gravações de Ambientação</li>
+          <li>Gravações de Encerramento</li>
+          <li>Gravações de Sala 01</li>
+          <li>Gravações de Sala 02</li>
+          <li>Gravações de Sala 03</li>
+          <li>Gravações de Sala 04</li>
+          <li>Gravações de Sala 05</li>
+          <li>Gravações de Sala 06</li>
+          <li>Gravações de Sala 07</li>
+          <li>Gravações de Sala 08</li>
+          <li>Gravações de Sala 09</li>
+          <li>Gravações de Sala 10</li>
+          <li>Encontro síncrono</li>
+          <li>Curso de Aperfeiçoamento em Mentoria de Diretores Escolares</li>
+          <li>Gravações</li>
+          <li>Livros e coletâneas</li>
+          <li>Material didático e pedagógico</li>
+          <li>Aviso</li>
+          <li>Cronograma</li>
+          <li>Fórum de dúvidas</li>
+          <li> Avisos</li>
+          <li> Fórum de dúvidas</li>
+          <li>Ambientação à plataforma</li>
+          <li>Sala 01 - Mentoria de diretores escolares: perspectivas teórico-metodológicas</li>
+          <li>Sala 02 - A relação com o saber e o aprender acadêmico, prático e relacional</li>
+          <li>Sala 03 - Escola conectada e a cidadania digital</li>
+          <li>Sala 04 - Relações intra e interpessoais: comunicações no ambiente escolar</li>
+          <li>Sala 05 - Violências e os contextos sociais e escolares</li>
+          <li>Sala 06 - Projeto político pedagógico e gestão escolar</li>
+          <li>Sala 07 - Gestão escolar no processo de alfabetização</li>
+          <li>Sala 08 - Política de educação integral: tempos e espaços escolares</li>
+          <li>Sala 09 - Gestão administrativa e financeira da escola</li>
+          <li>Sala 10 - Perfil do diretor: liderança e organização escolar</li>
+          <li>Sala de encerramento do curso</li>
+          <li>Sala 09 - Gestão administrativa e financeira da escola</li>
+          <li>Salas 01, 02 e 03</li>
+          <li>Salas 04, 05 e 06</li>
+          <li>Salas 07, 08 e 09</li>
+        </ol>
+      </div>
+
 
       <div class="bottom">
         <div class="course-info">
