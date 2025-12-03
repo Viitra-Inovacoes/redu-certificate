@@ -10,6 +10,7 @@ export async function getCertificateAuthorizationData(
   usersService: UsersService,
 ) {
   const request = context.switchToHttp().getRequest<Request>();
+  // TODO: salvar authorization token de alguma forma para evitar essa request
   const { id: reduUserId } = await usersService.getReduUser();
 
   const certificate = await certificatesService.findOneBy({

@@ -32,7 +32,6 @@ export class ReduAuthorizationService {
   constructor(private readonly reduApiService: ReduApiService) {}
 
   async authorize(authorizeParams: AuthorizeParams): Promise<void> {
-    console.log('authorize', authorizeParams);
     try {
       await this.reduApiService.get(this.buildUrl(authorizeParams));
     } catch (error) {

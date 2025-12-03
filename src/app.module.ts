@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Logger, Module } from '@nestjs/common';
 import { TemplatesModule } from './templates/templates.module';
 import { SpacesModule } from './s3/s3.module';
 import { ConfigModule } from '@nestjs/config';
@@ -11,6 +11,8 @@ import { LogosModule } from './logos/logos.module';
 import { ReduApiModule } from './redu-api/redu-api.module';
 import { ClientModule } from './client/client.module';
 import { dataSourceOptions } from './data-source';
+import { WinstonModule } from 'nest-winston';
+import { format, transports } from 'winston';
 import * as path from 'path';
 
 @Module({
@@ -26,6 +28,41 @@ import * as path from 'path';
       resolvers: [new HeaderResolver(['x-lang'])],
       typesOutputPath: path.join(__dirname, 'generated/i18n.generated.ts'),
     }),
+    WinstonModule.forRoot({
+      format: format.combine(
+        format.timestamp(),
+        format.errors({ stack: true }),
+      ),
+      transports: [
+        new transports.File({
+          filename: 'logs/errors.jsonl',
+          level: 'error',
+          format: format.combine(
+            format.timestamp(),
+            format.errors({ stack: true }),
+            format.json(),
+          ),
+        }),
+        new transports.File({
+          filename: 'logs/info.jsonl',
+          level: 'info',
+          format: format.combine(
+            format.timestamp(),
+            format.errors({ stack: true }),
+            format.json(),
+          ),
+        }),
+        new transports.File({
+          filename: 'logs/debug.jsonl',
+          level: 'debug',
+          format: format.combine(
+            format.timestamp(),
+            format.errors({ stack: true }),
+            format.json(),
+          ),
+        }),
+      ],
+    }),
     SignaturesModule,
     LogosModule,
     TemplatesModule,
@@ -36,6 +73,6 @@ import * as path from 'path';
     ClientModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [Logger],
 })
 export class AppModule {}

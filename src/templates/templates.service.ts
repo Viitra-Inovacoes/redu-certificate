@@ -148,7 +148,6 @@ export class TemplatesService {
 
   async create(structureType: StructureType, structureId: number) {
     const template = await this.findOrInitialize(structureType, structureId);
-    console.log('template', template);
     return this.templateRepository.save(template);
   }
 

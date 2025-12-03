@@ -13,18 +13,18 @@ import {
 } from 'nestjs-i18n';
 import { ValidationError } from 'class-validator';
 
-function enableVersioning(app: INestApplication) {
+function setupVersioning(app: INestApplication) {
   app.enableVersioning({
     type: VersioningType.URI,
     defaultVersion: '1',
   });
 }
 
-function enableCors(app: INestApplication) {
+function setupCors(app: INestApplication) {
   app.enableCors();
 }
 
-function enableValidation(app: INestApplication) {
+function setupValidation(app: INestApplication) {
   app.useGlobalPipes(
     new I18nValidationPipe({
       whitelist: true,
@@ -39,7 +39,7 @@ function enableValidation(app: INestApplication) {
   );
 }
 
-function enableSwagger(app: INestApplication) {
+function setupSwagger(app: INestApplication) {
   const config = new DocumentBuilder()
     .setVersion('1.0')
     .addSecurity('X-Client-Name', {
@@ -54,7 +54,7 @@ function enableSwagger(app: INestApplication) {
   );
 }
 
-function enableI18n(app: INestApplication) {
+function setupI18n(app: INestApplication) {
   function buildErrors(acc: Record<string, unknown>, error: ValidationError) {
     acc[error.property] = formatError(error);
     return acc;
@@ -84,15 +84,13 @@ function enableI18n(app: INestApplication) {
 }
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, {
-    logger: ['error', 'warn', 'log'],
-  });
+  const app = await NestFactory.create(AppModule);
 
-  enableI18n(app);
-  enableVersioning(app);
-  enableCors(app);
-  enableValidation(app);
-  enableSwagger(app);
+  setupI18n(app);
+  setupVersioning(app);
+  setupCors(app);
+  setupValidation(app);
+  setupSwagger(app);
 
   // Enable graceful shutdown
   app.enableShutdownHooks();

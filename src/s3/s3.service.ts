@@ -9,7 +9,9 @@ import {
   S3Client,
 } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
+import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
+import { Logger } from 'winston';
 
 @Injectable()
 export class S3Service {
@@ -17,7 +19,9 @@ export class S3Service {
   private bucket: string;
   private region: string;
 
-  constructor() {
+  constructor(
+    @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
+  ) {
     this.bucket = process.env.SPACES_BUCKET!;
     this.region = process.env.SPACES_REGION!;
     this.client = new S3Client({
@@ -55,10 +59,7 @@ export class S3Service {
   }
 
   async getFile(key: string) {
-    console.log('getFile', {
-      key,
-      bucket: this.bucket,
-    });
+    this.logger.info('getFile', { key });
 
     const command = new GetObjectCommand({
       Bucket: this.bucket,
@@ -69,13 +70,11 @@ export class S3Service {
   }
 
   async uploadFile(file: Express.Multer.File, key: string) {
-    console.log('uploadFile', {
+    this.logger.info('uploadFile', {
       key,
-      bucket: this.bucket,
-      file: file.originalname,
+      fileName: file.originalname,
       mimetype: file.mimetype,
-      buffer: file.buffer.length,
-      originalName: file.originalname,
+      size: file.buffer.length,
     });
 
     const command = new PutObjectCommand({
@@ -120,6 +119,8 @@ export class S3Service {
   }
 
   async deleteFile(key: string) {
+    this.logger.info('deleteFile', { key });
+
     const command = new DeleteObjectCommand({
       Bucket: this.bucket,
       Key: key,
@@ -141,6 +142,7 @@ export class S3Service {
 
   async deleteFolder(folder: string) {
     if (!folder) return;
+    this.logger.info('deleteFolder', { folder });
 
     const command = new ListObjectsV2Command({
       Bucket: this.bucket,

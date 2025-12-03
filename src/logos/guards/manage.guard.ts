@@ -16,13 +16,10 @@ export class ManageLogoGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<Request>();
     const { templateId } = request.params;
-    console.log('templateId', templateId);
     const template = await this.templatesService.findOneBy({
       where: { id: templateId },
       relations: { structure: true },
     });
-
-    console.log('template', template);
 
     await this.authorizationService.authorize({
       abilityAction: Ability.MANAGE,

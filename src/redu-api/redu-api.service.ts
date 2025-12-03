@@ -4,6 +4,8 @@ import { REQUEST } from '@nestjs/core';
 import { Inject } from '@nestjs/common';
 import type { Request } from 'express';
 import { i18n } from 'src/i18n';
+import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
+import { Logger } from 'winston';
 
 type QueryParams =
   | string[][]
@@ -23,10 +25,11 @@ export class ReduApiService {
   constructor(
     @Inject(REQUEST) private readonly request: Request,
     private readonly client: ClientService,
+    @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
   ) {}
 
   async get<T>(url: string, options?: RequestInit) {
-    console.log('ReduApiService', { url, options });
+    this.logger.info('get', { url, options });
     const response = await fetch(url, {
       ...options,
       method: 'GET',
@@ -94,6 +97,7 @@ export class ReduApiService {
         i18n.t('error.INVALID_AUTHORIZATION_HEADER'),
       );
 
+    this.logger.debug('getAuthorizationToken', { token });
     return token;
   }
 }
