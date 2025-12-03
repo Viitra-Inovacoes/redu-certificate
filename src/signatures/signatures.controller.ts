@@ -23,32 +23,6 @@ import { Ability } from 'src/redu-api/authorization.service';
 export class SignaturesController {
   constructor(private readonly signaturesService: SignaturesService) {}
 
-  @Post('templates/:templateId/signatures')
-  @ApiConsumes('multipart/form-data')
-  @ApiBody({ type: SignatureSchema })
-  @UseInterceptors(FileInterceptor('file'))
-  @ApiResponse({ type: SignatureResponseDto })
-  @SignatureGuard(Ability.MANAGE)
-  async createSignature(
-    @Param('templateId') templateId: string,
-    @Body() body: CreateSignatureDto,
-    @UploadedFile(
-      FileValidationFactory.createValidationPipe({
-        fileIsRequired: true,
-        maxSize: FileValidationFactory.toBytes(10, 'mb'),
-        fileType: 'image/*',
-      }),
-    )
-    file: Express.Multer.File,
-  ) {
-    const signature = await this.signaturesService.create(
-      templateId,
-      body,
-      file,
-    );
-    return this.signaturesService.serialize(signature);
-  }
-
   @Put('signatures/:id')
   @ApiConsumes('multipart/form-data')
   @ApiBody({ type: SignatureSchema })

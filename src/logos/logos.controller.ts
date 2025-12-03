@@ -19,27 +19,6 @@ import { LogoSchema } from 'src/logos/dto/logo-schema';
 export class LogosController {
   constructor(private readonly logosService: LogosService) {}
 
-  @Post('templates/:templateId/logos')
-  @ApiConsumes('multipart/form-data')
-  @ApiBody({ type: LogoSchema })
-  @UseInterceptors(FileInterceptor('file'))
-  @ApiResponse({ type: LogoResponseDto })
-  @LogoGuard(Ability.MANAGE)
-  async createLogo(
-    @Param('templateId') templateId: string,
-    @UploadedFile(
-      FileValidationFactory.createValidationPipe({
-        fileIsRequired: true,
-        maxSize: FileValidationFactory.toBytes(10, 'mb'),
-        fileType: 'image/*',
-      }),
-    )
-    file: Express.Multer.File,
-  ) {
-    const logo = await this.logosService.create(templateId, file);
-    return this.logosService.serialize(logo);
-  }
-
   @Delete('logos/:id')
   remove(@Param('id') id: string) {
     return this.logosService.remove(id);
