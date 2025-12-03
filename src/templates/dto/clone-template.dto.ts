@@ -13,14 +13,17 @@ import { StructureType } from 'src/structures/entities/structure.entity';
 
 export class Structure {
   @ApiProperty({ enum: Object.values(StructureType), required: true })
-  @IsString()
-  @IsNotEmpty()
+  @IsString({ message: i18n.validationMessage('validation.STRING') })
+  @IsNotEmpty({ message: i18n.validationMessage('validation.NOT_EMPTY') })
   @IsEnum(StructureType)
   structureType: StructureType;
 
   @ApiProperty({ type: 'number', required: true })
-  @IsNumber()
-  @IsNotEmpty()
+  @IsNumber(
+    { allowNaN: false, allowInfinity: false },
+    { message: i18n.validationMessage('validation.NUMBER') },
+  )
+  @IsNotEmpty({ message: i18n.validationMessage('validation.NOT_EMPTY') })
   structureId: number;
 }
 

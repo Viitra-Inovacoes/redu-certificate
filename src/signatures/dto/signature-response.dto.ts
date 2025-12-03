@@ -32,6 +32,10 @@ export class SignatureResponseDto {
   @Expose()
   role: string;
 
+  @ApiProperty({ type: 'string' })
+  @Expose()
+  organization: string;
+
   @ApiProperty({ type: File })
   @Type(() => File)
   @Expose()

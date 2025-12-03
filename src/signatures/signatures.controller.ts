@@ -6,6 +6,7 @@ import {
   Delete,
   UploadedFile,
   UseInterceptors,
+  Post,
 } from '@nestjs/common';
 import { SignaturesService } from './signatures.service';
 import { UpdateSignatureDto } from './dto/update-signature.dto';
@@ -14,12 +15,41 @@ import { ApiBody, ApiConsumes, ApiResponse } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { FileValidationFactory } from 'src/validators/file-validation.factory';
 import { SignatureResponseDto } from 'src/signatures/dto/signature-response.dto';
+import { CreateSignatureDto } from 'src/signatures/dto/create-signature.dto';
+import { SignatureGuard } from 'src/signatures/guards/signature.guard';
+import { Ability } from 'src/redu-api/authorization.service';
 
-@Controller('signatures')
+@Controller()
 export class SignaturesController {
   constructor(private readonly signaturesService: SignaturesService) {}
 
-  @Put(':id')
+  @Post('templates/:templateId/signatures')
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({ type: SignatureSchema })
+  @UseInterceptors(FileInterceptor('file'))
+  @ApiResponse({ type: SignatureResponseDto })
+  @SignatureGuard(Ability.MANAGE)
+  async createSignature(
+    @Param('templateId') templateId: string,
+    @Body() body: CreateSignatureDto,
+    @UploadedFile(
+      FileValidationFactory.createValidationPipe({
+        fileIsRequired: true,
+        maxSize: FileValidationFactory.toBytes(10, 'mb'),
+        fileType: 'image/*',
+      }),
+    )
+    file: Express.Multer.File,
+  ) {
+    const signature = await this.signaturesService.create(
+      templateId,
+      body,
+      file,
+    );
+    return this.signaturesService.serialize(signature);
+  }
+
+  @Put('signatures/:id')
   @ApiConsumes('multipart/form-data')
   @ApiBody({ type: SignatureSchema })
   @UseInterceptors(FileInterceptor('file'))
@@ -40,7 +70,7 @@ export class SignaturesController {
     return this.signaturesService.serialize(signature);
   }
 
-  @Delete(':id')
+  @Delete('signatures/:id')
   remove(@Param('id') id: string) {
     return this.signaturesService.remove(id);
   }

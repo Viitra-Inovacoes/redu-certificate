@@ -18,7 +18,9 @@ export function TransformBoolean(): PropertyDecorator {
   ): void {
     // When my decorator runs, first runs Type (so we go back to string),
     // then Transform (So we properly convert it)
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     typeDecorator(target, propertyName);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     transformDecorator(target, propertyName);
   };
 }

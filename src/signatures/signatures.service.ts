@@ -50,12 +50,7 @@ export class SignaturesService {
     file: Express.Multer.File,
   ) {
     const signature = await this.findOne(id);
-
-    await this.signatureRepository.update(id, {
-      name: body.name,
-      role: body.role,
-    });
-
+    await this.signatureRepository.update(id, body);
     if (file) await this.s3.uploadFile(file, signature.getSpacesKey());
 
     return await this.findOne(id);

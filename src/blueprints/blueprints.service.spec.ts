@@ -1,10 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { BlueprintsService } from './blueprints.service';
-import { BlueprintFiles } from 'src/blueprints/blueprint-files.interface';
 import { S3Service } from 'src/s3/s3.service';
 import { Blueprint } from 'src/blueprints/entities/blueprint.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { v7 as uuidv7 } from 'src/__mocks__/uuid';
+import { BlueprintFiles } from 'src/blueprints/decorators/blueprint-files.decorator';
 
 describe('BlueprintsService', () => {
   let service: BlueprintsService;

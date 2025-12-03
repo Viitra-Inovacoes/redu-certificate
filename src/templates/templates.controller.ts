@@ -6,8 +6,6 @@ import {
   Body,
   Delete,
   Get,
-  UploadedFile,
-  UseInterceptors,
 } from '@nestjs/common';
 import { ApiBody, ApiConsumes, ApiResponse } from '@nestjs/swagger';
 import { CreateTemplateDto } from 'src/templates/dto/create-template.dto';
@@ -23,17 +21,6 @@ import { ApiAuth } from 'src/decorators/swagger/api-auth.decorator';
 import { ApiStructureTypeIdParam } from 'src/decorators/swagger';
 import { CloneTemplateDto } from 'src/templates/dto/clone-template.dto';
 import { TemplateResponseDto } from 'src/templates/dto/template-response.dto';
-import { FileValidationFactory } from 'src/validators/file-validation.factory';
-import { SignatureGuard } from 'src/signatures/guards/signature.guard';
-import { CreateSignatureDto } from 'src/signatures/dto/create-signature.dto';
-import { SignatureResponseDto } from 'src/signatures/dto/signature-response.dto';
-import { SignatureSchema } from 'src/signatures/dto/signature-schema';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { SignaturesService } from 'src/signatures/signatures.service';
-import { LogoGuard } from 'src/logos/guards/logo.guard';
-import { LogoSchema } from 'src/logos/dto/logo-schema';
-import { LogoResponseDto } from 'src/logos/dto/logo-response.dto';
-import { LogosService } from 'src/logos/logos.service';
 
 @Controller('templates')
 @ApiAuth()
@@ -41,56 +28,7 @@ export class TemplatesController {
   constructor(
     private readonly templatesService: TemplatesService,
     private readonly previewService: PreviewService,
-    private readonly signaturesService: SignaturesService,
-    private readonly logosService: LogosService,
   ) {}
-
-  @Post(':templateId/signatures')
-  @ApiConsumes('multipart/form-data')
-  @ApiBody({ type: SignatureSchema })
-  @UseInterceptors(FileInterceptor('file'))
-  @ApiResponse({ type: SignatureResponseDto })
-  @SignatureGuard(Ability.MANAGE)
-  async createSignature(
-    @Param('templateId') templateId: string,
-    @Body() body: CreateSignatureDto,
-    @UploadedFile(
-      FileValidationFactory.createValidationPipe({
-        fileIsRequired: true,
-        maxSize: FileValidationFactory.toBytes(10, 'mb'),
-        fileType: 'image/*',
-      }),
-    )
-    file: Express.Multer.File,
-  ) {
-    const signature = await this.signaturesService.create(
-      templateId,
-      body,
-      file,
-    );
-    return this.signaturesService.serialize(signature);
-  }
-
-  @Post(':templateId/logos')
-  @ApiConsumes('multipart/form-data')
-  @ApiBody({ type: LogoSchema })
-  @UseInterceptors(FileInterceptor('file'))
-  @ApiResponse({ type: LogoResponseDto })
-  @LogoGuard(Ability.MANAGE)
-  async createLogo(
-    @Param('templateId') templateId: string,
-    @UploadedFile(
-      FileValidationFactory.createValidationPipe({
-        fileIsRequired: true,
-        maxSize: FileValidationFactory.toBytes(10, 'mb'),
-        fileType: 'image/*',
-      }),
-    )
-    file: Express.Multer.File,
-  ) {
-    const logo = await this.logosService.create(templateId, file);
-    return this.logosService.serialize(logo);
-  }
 
   @Post(':structureType/:structureId/clone')
   @TemplateGuard(Ability.MANAGE)

@@ -160,9 +160,7 @@ export class CertificateBuilderService {
   private async getSignatures() {
     const buildSignature = async (s: Signature) => {
       return {
-        name: s.name,
-        role: s.role,
-        organization: this.template.front.organization,
+        ...s,
         url: await this.s3.getPresignedUrl(s.getSpacesKey()),
       };
     };

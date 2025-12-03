@@ -31,6 +31,9 @@ export class Signature {
   @Column('varchar')
   role: string;
 
+  @Column('varchar')
+  organization: string;
+
   @CreateDateColumn({
     type: 'timestamp with time zone',
     default: () => 'now()',
