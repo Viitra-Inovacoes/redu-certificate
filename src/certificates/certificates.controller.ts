@@ -16,6 +16,7 @@ import { Ability } from 'src/redu-api/authorization.service';
 import { ApiSecurity, ApiStructureTypeIdParam } from 'src/decorators/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { MigrateCertificateDto } from 'src/certificates/dto/migrate-certificate.dto';
+import { EnumParamValidationPipe } from 'src/pipes/enum-param-validation.pipe';
 
 @Controller('certificates')
 @ApiSecurity()
@@ -40,7 +41,8 @@ export class CertificatesController {
   @CertificateGuard(Ability.CREATE)
   @ApiStructureTypeIdParam()
   async create(
-    @Param('structureType') structureType: StructureType,
+    @Param('structureType', new EnumParamValidationPipe(StructureType))
+    structureType: StructureType,
     @Param('structureId') structureId: number,
   ) {
     return this.certificatesService.create(structureType, structureId);
@@ -55,7 +57,8 @@ export class CertificatesController {
   @CertificateGuard(Ability.MANAGE)
   @ApiStructureTypeIdParam()
   async findOneByStructure(
-    @Param('structureType') structureType: StructureType,
+    @Param('structureType', new EnumParamValidationPipe(StructureType))
+    structureType: StructureType,
     @Param('structureId') structureId: number,
   ) {
     return this.certificatesService.getCertificateInfo(

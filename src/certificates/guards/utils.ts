@@ -1,8 +1,13 @@
-import { ExecutionContext } from '@nestjs/common';
+import {
+  ArgumentMetadata,
+  BadRequestException,
+  ExecutionContext,
+} from '@nestjs/common';
 import { CertificatesService } from '../certificates.service';
 import { UsersService } from 'src/users/users.service';
 import { Request } from 'express';
 import { StructureType } from 'src/structures/entities/structure.entity';
+import { EnumParamValidationPipe } from 'src/pipes/enum-param-validation.pipe';
 
 export async function getCertificateAuthorizationData(
   context: ExecutionContext,
@@ -33,6 +38,17 @@ function decideWhereClause(request: Request) {
     structureType?: StructureType;
     structureId?: number;
   };
+
+  if (!structureType) {
+    throw new BadRequestException('structureType is required');
+  }
+
+  const validationPipe = new EnumParamValidationPipe(StructureType);
+  const metadata: ArgumentMetadata = {
+    type: 'param',
+    data: 'structureType',
+  };
+  validationPipe.transform(structureType, metadata);
 
   if (id) {
     return { id };

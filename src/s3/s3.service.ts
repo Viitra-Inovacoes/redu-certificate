@@ -59,7 +59,7 @@ export class S3Service {
   }
 
   async getFile(key: string) {
-    this.logger.info('getFile', { key });
+    this.logger.debug('getFile', { key, context: 'S3Service' });
 
     const command = new GetObjectCommand({
       Bucket: this.bucket,
@@ -70,7 +70,8 @@ export class S3Service {
   }
 
   async uploadFile(file: Express.Multer.File, key: string) {
-    this.logger.info('uploadFile', {
+    this.logger.debug('uploadFile', {
+      context: 'S3Service',
       key,
       fileName: file.originalname,
       mimetype: file.mimetype,
@@ -119,7 +120,7 @@ export class S3Service {
   }
 
   async deleteFile(key: string) {
-    this.logger.info('deleteFile', { key });
+    this.logger.debug('deleteFile', { key, context: 'S3Service' });
 
     const command = new DeleteObjectCommand({
       Bucket: this.bucket,
@@ -142,7 +143,7 @@ export class S3Service {
 
   async deleteFolder(folder: string) {
     if (!folder) return;
-    this.logger.info('deleteFolder', { folder });
+    this.logger.debug('deleteFolder', { folder, context: 'S3Service' });
 
     const command = new ListObjectsV2Command({
       Bucket: this.bucket,

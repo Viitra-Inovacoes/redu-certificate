@@ -8,6 +8,9 @@ export class RendererService {
     headless: true,
     executablePath: process.env.PUPPETEER_EXECUTABLE_PATH,
     args: ['--no-sandbox', '--disable-gpu'],
+    // ERROR [ExceptionsHandler] ProtocolError: Page.captureScreenshot timed out.
+    // Increase the 'protocolTimeout' setting in launch/connect calls for a higher timeout if needed.
+    protocolTimeout: 360000, // default: 180_000
   });
 
   async onModuleDestroy() {
@@ -39,8 +42,6 @@ export class RendererService {
     return this.toFile(buffer, 'application/pdf');
   }
 
-  // ERROR [ExceptionsHandler] ProtocolError: Page.captureScreenshot timed out.
-  // Increase the 'protocolTimeout' setting in launch/connect calls for a higher timeout if needed.
   async png(html: string) {
     const buffer = await this.render(html, async (page) => {
       await page.setViewport({

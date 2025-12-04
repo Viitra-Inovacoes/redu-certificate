@@ -34,6 +34,7 @@ import { LogoSchema } from 'src/logos/dto/logo-schema';
 import { LogosService } from 'src/logos/logos.service';
 import { LogoResponseDto } from 'src/logos/dto/logo-response.dto';
 import { LogoGuard } from 'src/logos/guards/logo.guard';
+import { EnumParamValidationPipe } from 'src/pipes/enum-param-validation.pipe';
 @Controller('templates')
 @ApiAuth()
 export class TemplatesController {
@@ -96,7 +97,8 @@ export class TemplatesController {
   @ApiStructureTypeIdParam()
   @ApiBody({ type: CloneTemplateDto })
   async clone(
-    @Param('structureType') structureType: StructureType,
+    @Param('structureType', new EnumParamValidationPipe(StructureType))
+    structureType: StructureType,
     @Param('structureId') structureId: number,
     @Body() body: CloneTemplateDto,
   ) {
@@ -109,7 +111,8 @@ export class TemplatesController {
   @ApiStructureTypeIdParam()
   @ApiResponse({ type: TemplateResponseDto })
   async create(
-    @Param('structureType') structureType: StructureType,
+    @Param('structureType', new EnumParamValidationPipe(StructureType))
+    structureType: StructureType,
     @Param('structureId') structureId: number,
   ) {
     const template = await this.templatesService.create(
@@ -188,7 +191,8 @@ export class TemplatesController {
   @TemplateGuard(Ability.READ)
   @ApiResponse({ type: TemplateResponseDto })
   async findOneByStructure(
-    @Param('structureType') structureType: StructureType,
+    @Param('structureType', new EnumParamValidationPipe(StructureType))
+    structureType: StructureType,
     @Param('structureId') structureId: number,
   ) {
     const template = await this.templatesService.findOneByStructure(

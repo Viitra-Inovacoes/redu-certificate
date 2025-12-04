@@ -38,7 +38,10 @@ export class ReduAuthorizationService {
   ) {}
 
   async authorize(authorizeParams: AuthorizeParams): Promise<void> {
-    this.logger.debug('authorize', authorizeParams);
+    this.logger.debug('authorize', authorizeParams, {
+      context: 'ReduAuthorizationService',
+    });
+
     try {
       await this.reduApiService.get(this.buildUrl(authorizeParams));
     } catch (error) {

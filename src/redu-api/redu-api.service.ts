@@ -29,7 +29,11 @@ export class ReduApiService {
   ) {}
 
   async get<T>(url: string, options?: RequestInit) {
-    this.logger.info('get', { url, options });
+    this.logger.info('get', {
+      context: 'ReduApiService',
+      url,
+      options,
+    });
     const response = await fetch(url, {
       ...options,
       method: 'GET',
@@ -97,7 +101,10 @@ export class ReduApiService {
         i18n.t('error.INVALID_AUTHORIZATION_HEADER'),
       );
 
-    this.logger.debug('getAuthorizationToken', { token });
+    this.logger.debug('getAuthorizationToken', {
+      context: 'ReduApiService',
+      token,
+    });
     return token;
   }
 }

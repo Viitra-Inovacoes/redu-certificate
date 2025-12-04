@@ -1,4 +1,4 @@
-import { Logger, Module } from '@nestjs/common';
+import { Logger, MiddlewareConsumer, Module } from '@nestjs/common';
 import { TemplatesModule } from './templates/templates.module';
 import { SpacesModule } from './s3/s3.module';
 import { ConfigModule } from '@nestjs/config';
@@ -14,6 +14,18 @@ import { dataSourceOptions } from './data-source';
 import { WinstonModule } from 'nest-winston';
 import { format, transports } from 'winston';
 import * as path from 'path';
+import { RequestLoggerMiddleware } from 'src/logger/request-logger.middleware';
+
+const transportOptions = {
+  maxsize: 10 * 1024 * 1024,
+  maxFiles: 10,
+  tailable: true,
+  format: format.combine(
+    format.timestamp(),
+    format.errors({ stack: true }),
+    format.json(),
+  ),
+};
 
 @Module({
   imports: [
@@ -35,31 +47,22 @@ import * as path from 'path';
       ),
       transports: [
         new transports.File({
-          filename: 'logs/errors.jsonl',
+          filename: 'logs/error.jsonl',
           level: 'error',
-          format: format.combine(
-            format.timestamp(),
-            format.errors({ stack: true }),
-            format.json(),
-          ),
+          handleExceptions: true,
+          handleRejections: true,
+
+          ...transportOptions,
         }),
         new transports.File({
           filename: 'logs/info.jsonl',
           level: 'info',
-          format: format.combine(
-            format.timestamp(),
-            format.errors({ stack: true }),
-            format.json(),
-          ),
+          ...transportOptions,
         }),
         new transports.File({
           filename: 'logs/debug.jsonl',
           level: 'debug',
-          format: format.combine(
-            format.timestamp(),
-            format.errors({ stack: true }),
-            format.json(),
-          ),
+          ...transportOptions,
         }),
       ],
     }),
@@ -75,4 +78,8 @@ import * as path from 'path';
   controllers: [],
   providers: [Logger],
 })
-export class AppModule {}
+export class AppModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(RequestLoggerMiddleware).forRoutes('*');
+  }
+}
