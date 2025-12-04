@@ -6,6 +6,7 @@ export type ClientConfig = {
 export type ClientKey =
   | 'development'
   | 'avamec'
+  | 'avamec-viitrain'
   | 'avamec-homolog'
   | 'avaviitra'
   | 'conectamaisedu'
@@ -37,6 +38,10 @@ export const configs: Record<ClientKey, ClientConfig> = {
   'avamec-homolog': {
     baseUrl: 'https://api-avamecinterativo.cin.ufpe.br/api',
     appKey: 'bmerE6W7teWF09nHOhEBh7ozabiR2c0X4embxXiBASU',
+  },
+  'avamec-viitrain': {
+    baseUrl: 'https://api.avamec.viitra.in/api',
+    appKey: 'dn2YYVMyYDda0kxw2ggbhKvE18i2WTg4Azvd472r',
   },
   avaviitra: {
     // baseUrl: 'https://ava.viitra.in/api',
