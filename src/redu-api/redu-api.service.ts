@@ -6,6 +6,7 @@ import type { Request } from 'express';
 import { i18n } from 'src/i18n';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { Logger } from 'winston';
+import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager';
 
 type QueryParams =
   | string[][]
@@ -20,17 +21,33 @@ export class ReduApiError extends Error {
   }
 }
 
+const REDU_API_CACHE_TTL = 60 * 1000; // 1 minute
+
 @Injectable({ scope: Scope.REQUEST })
 export class ReduApiService {
   constructor(
     @Inject(REQUEST) private readonly request: Request,
     private readonly client: ClientService,
     @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
+    @Inject(CACHE_MANAGER) private readonly cache: Cache,
   ) {}
 
   async get<T>(url: string, options?: RequestInit) {
-    this.logger.info('get', {
+    const cacheKey = this.requestCacheKey(url);
+    const cached = await this.cache.get(cacheKey);
+    if (cached) {
+      this.logger.debug('get', {
+        context: 'ReduApiService',
+        isCached: true,
+        url,
+        options,
+      });
+      return cached as T;
+    }
+
+    this.logger.debug('get', {
       context: 'ReduApiService',
+      isCached: false,
       url,
       options,
     });
@@ -45,7 +62,9 @@ export class ReduApiService {
     });
 
     if (!response.ok) throw new ReduApiError(await response.text());
-    return this.toJson<T>(response);
+    const data = await this.toJson<T>(response);
+    await this.cache.set(cacheKey, data, REDU_API_CACHE_TTL);
+    return data;
   }
 
   buildUrl(path: string, queryParams?: QueryParams): string {
@@ -106,5 +125,11 @@ export class ReduApiService {
       token,
     });
     return token;
+  }
+
+  private requestCacheKey(url: string): string {
+    const authorizationToken = this.getAuthorizationToken();
+    const clientName = this.client.clientName;
+    return `${clientName}:${authorizationToken}:${url}`;
   }
 }
