@@ -18,7 +18,7 @@ import { RequestLoggerMiddleware } from 'src/logger/request-logger.middleware';
 
 const transportOptions = {
   maxsize: 10 * 1024 * 1024,
-  maxFiles: 10,
+  maxFiles: 5,
   tailable: true,
   format: format.combine(
     format.timestamp(),

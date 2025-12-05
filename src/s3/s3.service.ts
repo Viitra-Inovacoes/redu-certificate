@@ -9,8 +9,8 @@ import {
   S3Client,
 } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
-import { Inject, Injectable } from '@nestjs/common';
-import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
+import { Injectable } from '@nestjs/common';
+import { InjectLogger } from 'src/decorators/inject-logger.decorator';
 import { Logger } from 'winston';
 
 @Injectable()
@@ -19,9 +19,7 @@ export class S3Service {
   private bucket: string;
   private region: string;
 
-  constructor(
-    @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
-  ) {
+  constructor(@InjectLogger() private readonly logger: Logger) {
     this.bucket = process.env.SPACES_BUCKET!;
     this.region = process.env.SPACES_REGION!;
     this.client = new S3Client({

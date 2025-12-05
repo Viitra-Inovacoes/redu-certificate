@@ -4,9 +4,9 @@ import { REQUEST } from '@nestjs/core';
 import { Inject } from '@nestjs/common';
 import type { Request } from 'express';
 import { i18n } from 'src/i18n';
-import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { Logger } from 'winston';
 import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager';
+import { InjectLogger } from 'src/decorators/inject-logger.decorator';
 
 type QueryParams =
   | string[][]
@@ -28,7 +28,7 @@ export class ReduApiService {
   constructor(
     @Inject(REQUEST) private readonly request: Request,
     private readonly client: ClientService,
-    @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
+    @InjectLogger() private readonly logger: Logger,
     @Inject(CACHE_MANAGER) private readonly cache: Cache,
   ) {}
 
@@ -120,10 +120,6 @@ export class ReduApiService {
         i18n.t('error.INVALID_AUTHORIZATION_HEADER'),
       );
 
-    this.logger.debug('getAuthorizationToken', {
-      context: 'ReduApiService',
-      token,
-    });
     return token;
   }
 

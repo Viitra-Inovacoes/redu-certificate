@@ -12,6 +12,7 @@ import {
   I18nValidationException,
 } from 'nestjs-i18n';
 import { ValidationError } from 'class-validator';
+import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 
 function setupVersioning(app: INestApplication) {
   app.enableVersioning({
@@ -94,6 +95,8 @@ async function bootstrap() {
 
   // Enable graceful shutdown
   app.enableShutdownHooks();
+
+  app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));
 
   const port = process.env.PORT ?? 3001;
   await app.listen(port);
