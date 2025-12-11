@@ -152,6 +152,14 @@ export class CertificatesService {
         relations: { structure: true },
       },
     );
+
+    const common = {
+      organization: template.front?.organization,
+      generationEnabled: template.generationEnabled,
+      downloadButtonLabel: template.downloadButtonLabel,
+      canGenerate: await this.requirements.canGenerate(template),
+      requirements: template.requirements,
+    };
     try {
       const certificate = await this.findOneBy({
         where: {
@@ -163,19 +171,15 @@ export class CertificatesService {
         relations: { template: { structure: true } },
       });
       return {
-        downloadButtonLabel: template.downloadButtonLabel,
-        canGenerate: await this.requirements.canGenerate(template),
+        ...common,
         outdated: certificate.outdated,
-        requirements: template.requirements,
         urls: await this.getUrls(certificate),
       };
     } catch (error) {
       if (!(error instanceof NotFoundException)) throw error;
       return {
-        downloadButtonLabel: template.downloadButtonLabel,
-        canGenerate: await this.requirements.canGenerate(template),
+        ...common,
         outdated: false,
-        requirements: template.requirements,
         urls: null,
       };
     }
