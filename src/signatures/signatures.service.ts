@@ -68,6 +68,7 @@ export class SignaturesService {
       id: uuidv7(),
       name: signature.name,
       role: signature.role,
+      organization: signature.organization,
       template,
     });
 
